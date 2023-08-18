@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, TouchableOpacity } from 'react-native';
+import { auth } from '../firebase'
 
 function HomeScreen({ navigation }) {
   return (
@@ -9,6 +10,9 @@ function HomeScreen({ navigation }) {
         title="Go to Details"
         onPress={() => navigation.navigate('Details')}
       />
+      <TouchableOpacity onPress={() => auth.signOut().then(() => {navigation.replace('LogReg');})}>
+        <Text>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 }
