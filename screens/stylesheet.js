@@ -1,37 +1,105 @@
 import { StyleSheet } from 'react-native';
 import { vw, vh } from 'react-native-expo-viewport-units';
-import {
-    useFonts,
-    LibreBodoni_400Regular,
-    LibreBodoni_500Medium,
-    LibreBodoni_600SemiBold,
-    LibreBodoni_700Bold,
-    LibreBodoni_400Regular_Italic,
-    LibreBodoni_500Medium_Italic,
-    LibreBodoni_600SemiBold_Italic,
-    LibreBodoni_700Bold_Italic,
-} from '@expo-google-fonts/libre-bodoni';
 
-export const useCustomFonts = () => {
-    return useFonts({
-        LibreBodoni_400Regular,
-        LibreBodoni_500Medium,
-        LibreBodoni_600SemiBold,
-        LibreBodoni_700Bold,
-        LibreBodoni_400Regular_Italic,
-        LibreBodoni_500Medium_Italic,
-        LibreBodoni_600SemiBold_Italic,
-        LibreBodoni_700Bold_Italic,
-    });
-};
+const styles = StyleSheet.create({
+    wAuto: {
+        width: 'auto',
+    },
 
-export default StyleSheet.create({
     w100: {
         width: '100%',
     },
 
     w100vw: {
         width: vw(100),
+    },
+
+    w90: {
+        width: '90%',
+    },
+
+    w90vw: {
+        width: vw(90),
+    },
+
+    w80: {
+        width: '80%',
+    },
+
+    w80vw: {
+        width: vw(80),
+    },
+
+    w60: {
+        width: '60%',
+    },
+
+    w60vw: {
+        width: vw(60),
+    },
+
+    w50: {
+        width: '50%',
+    },
+
+    w50vw: {
+        width: vw(50),
+    },
+
+    w40: {
+        width: '40%',
+    },
+
+    w40vw: {
+        width: vw(40),
+    },
+
+    w20: {
+        width: '20%',
+    },
+
+    w20vw: {
+        width: vw(20),
+    },
+
+    w10: {
+        width: '10%',
+    },
+
+    w10vw: {
+        width: vw(10),
+    },
+
+    w5: {
+        width: '5%',
+    },
+
+    w5vw: {
+        width: vw(5),
+    },
+
+    w2: {
+        width: '2%',
+    },
+
+    w2vw: {
+        width: vw(2),
+    },
+
+    w1: {
+        width: '1%',
+    },
+
+    w1vw: {
+        width: vw(1),
+    },
+
+    w0: {
+        width: '0%',
+    },
+
+    w0vw: {
+        width: vw(0),
     },
 
     h100: {
@@ -42,19 +110,536 @@ export default StyleSheet.create({
         height: vh(100),
     },
 
-    h1: {
-        fontFamily: 'LibreBodoni_700Bold',
-        lineHeight: 56,
-        color: '#2F2F2F',
-        fontSize: 40,
+    h80: {
+        height: '80%',
     },
 
-    background: {
-        backgroundColor: 'yellow',
+    h80vh: {
+        height: vh(80),
+    },
+
+    h60: {
+        height: '60%',
+    },
+
+    h60vh: {
+        height: vh(60),
+    },
+
+    h50: {
+        height: '50%',
+    },
+
+    h50vh: {
+        height: vh(50),
+    },
+
+    h40: {
+        height: '40%',
+    },
+
+    h40vh: {
+        height: vh(40),
+    },
+
+    h40vw: {
+        height: vw(40),
+    },
+
+    h30: {
+        height: '30%',
+    },
+
+    h30vh: {
+        height: vh(30),
+    },
+
+    h25: {
+        height: '25%',
+    },
+
+    h25vh: {
+        height: vh(25),
+    },
+
+    h20: {
+        height: '20%',
+    },
+
+    h20vh: {
+        height: vh(20),
+    },
+
+    h10: {
+        height: '10%',
+    },
+
+    h10vh: {
+        height: vh(10),
+    },
+
+    h5: {
+        height: '5%',
+    },
+
+    h5vh: {
+        height: vh(5),
+    },
+
+    h2: {
+        height: '2%',
+    },
+
+    h2vh: {
+        height: vh(2),
+    },
+
+    marginTop10vw: {
+        marginTop: vw(10),
+    },
+
+    marginTop8vw: {
+        marginTop: vw(8),
+    },
+
+    marginTop6vw: {
+        marginTop: vw(6),
+    },
+
+    marginTop5vw: {
+        marginTop: vw(5),
+    },
+
+    marginTop4vw: {
+        marginTop: vw(4),
+    },
+
+    marginTop2vw: {
+        marginTop: vw(2),
+    },
+
+    marginTop1vw: {
+        marginTop: vw(1),
+    },
+
+    marginTop0vw: {
+        marginTop: vw(0),
+    },
+
+    marginTop10vh: {
+        marginTop: vh(10),
+    },
+
+    marginTop8vh: {
+        marginTop: vh(8),
+    },
+
+    marginTop6vh: {
+        marginTop: vh(6),
+    },
+
+    marginTop5vh: {
+        marginTop: vh(5),
+    },
+
+    marginTop2vh: {
+        marginTop: vh(2),
+    },
+
+    marginTop1vh: {
+        marginTop: vh(1),
+    },
+
+    marginBottom10vw: {
+        marginBottom: vw(10),
+    },
+
+    marginBottom8vw: {
+        marginBottom: vw(8),
+    },
+
+    marginBottom6vw: {
+        marginBottom: vw(6),
+    },
+
+    marginBottom5vw: {
+        marginBottom: vw(5),
+    },
+
+    marginBottom4vw: {
+        marginBottom: vw(4),
+    },
+
+    marginBottom2vw: {
+        marginBottom: vw(2),
+    },
+
+    marginBottom1vw: {
+        marginBottom: vw(1),
+    },
+
+    marginRight10vw: {
+        marginRight: vw(10),
+    },
+
+    marginRight8vw: {
+        marginRight: vw(8),
+    },
+
+    marginRight6vw: {
+        marginRight: vw(6),
+    },
+
+    marginRight5vw: {
+        marginRight: vw(5),
+    },
+
+    marginRight4vw: {
+        marginRight: vw(4),
+    },
+
+    marginRight2vw: {
+        marginRight: vw(2),
+    },
+
+    marginRight1vw: {
+        marginRight: vw(1),
+    },
+
+    marginLeft10vw: {
+        marginLeft: vw(10),
+    },
+
+    marginLeft8vw: {
+        marginLeft: vw(8),
+    },
+
+    marginLeft6vw: {
+        marginLeft: vw(6),
+    },
+
+    marginLeft5vw: {
+        marginLeft: vw(5),
+    },
+
+    marginLeft4vw: {
+        marginLeft: vw(4),
+    },
+
+    marginLeft2vw: {
+        marginLeft: vw(2),
+    },
+
+    marginLeft1vw: {
+        marginLeft: vw(1),
+    },
+
+    padding4vw: {
+        padding: vw(4),
+    },
+
+    padding2vw: {
+        padding: vw(2),
+    },
+
+    padding1vw: {
+        padding: vw(1),
+    },
+
+    paddingLeft4vw: {
+        paddingLeft: vw(4),
+    },
+
+    paddingLeft2vw: {
+        paddingLeft: vw(2),
+    },
+
+    paddingLeft1vw: {
+        paddingLeft: vw(1),
+    },
+
+    paddingRight4vw: {
+        paddingRight: vw(4),
+    },
+
+    paddingRight2vw: {
+        paddingRight: vw(2),
+    },
+
+    paddingRight1vw: {
+        paddingRight: vw(1),
+    },
+
+    paddingTop4vw: {
+        paddingTop: vw(4),
+    },
+
+    paddingTop2vw: {
+        paddingTop: vw(2),
+    },
+
+    paddingTop1vw: {
+        paddingTop: vw(1),
+    },
+
+    paddingBottom4vw: {
+        paddingBottom: vw(4),
+    },
+
+    paddingBottom2vw: {
+        paddingBottom: vw(2),
+    },
+
+    paddingBottom1vw: {
+        paddingBottom: vw(1),
+    },
+
+    paddingH4vw: {
+        paddingLeft: vw(4),
+        paddingRight: vw(4),
+    },
+
+    paddingH2vw: {
+        paddingLeft: vw(2),
+        paddingRight: vw(2),
+    },
+
+    paddingH1vw: {
+        paddingLeft: vw(1),
+        paddingRight: vw(1),
+    },
+
+    paddingV4vw: {
+        paddingTop: vw(4),
+        paddingBottom: vw(4),
+    },
+
+    paddingV2vw: {
+        paddingTop: vw(2),
+        paddingBottom: vw(2),
+    },
+
+    paddingV1vw: {
+        paddingTop: vw(1),
+        paddingBottom: vw(1),
+    },
+
+    dFlex: {
+        display: 'flex',
+    },
+
+    dNone: {
+        display: 'none',
+    },
+
+    flexRow: {
+        flexDirection: 'row',
+    },
+
+    flexCol: {
+        flexDirection: 'column',
+    },
+
+    flexWrap: {
+        flexWrap: 'wrap',
+    },
+
+    flexNoWrap: {
+        flexWrap: 'nowrap',
+    },
+
+    flex1: {
+        flex: 1,
+    },
+
+    flex2: {
+        flex: 2,
+    },
+
+    flex3: {
+        flex: 3,
+    },
+
+    gap10vw: {
+        gap: vw(10),
+    },
+
+    gap8vw: {
+        gap: vw(8),
+    },
+
+    gap6vw: {
+        gap: vw(6),
+    },
+
+    gap5vw: {
+        gap: vw(5),
+    },
+    
+    gap2vw: {
+        gap: vw(2),
+    },
+
+    gap1vw: {
+        gap: vw(1),
+    },
+
+    gap5vh: {
+        gap: vh(5),
+    },
+
+    gap2vh: {
+        gap: vh(2),
+    },
+
+    gap1vh: {
+        gap: vh(1),
+    },
+    
+    justifyContentCenter: {
+        justifyContent: 'center',
+    },
+
+    justifyContentStart: {
+        justifyContent: 'flex-start',
+    },
+
+    justifyContentEnd: {
+        justifyContent: 'flex-end',
+    },
+
+    justifyContentSpaceBetween: {
+        justifyContent: 'space-between',
+    },
+
+    justifyContentSpaceAround: {
+        justifyContent: 'space-around',
+    },
+
+    justifyContentSpaceEvenly: {
+        justifyContent: 'space-evenly',
+    },
+
+    alignItemsCenter: {
+        alignItems: 'center',
+    },
+
+    alignItemsStart: {
+        alignItems: 'flex-start',
+    },
+
+    alignItemsEnd: {
+        alignItems: 'flex-end',
+    },
+
+    alignItemsStretch: {
+        alignItems: 'stretch',
+    },
+
+    alignItemsBaseline: {
+        alignItems: 'baseline',
+    },
+
+    alignSelfCenter: {
+        alignSelf: 'center',
+    },
+
+    alignSelfStart: {
+        alignSelf: 'flex-start',
+    },
+
+    alignSelfEnd: {
+        alignSelf: 'flex-end', 
+    },
+
+    alignSelfStretch: {
+        alignSelf: 'stretch',
+    },
+
+    alignSelfBaseline: {
+        alignSelf: 'baseline',
+    },
+
+    alignContentCenter: {
+        alignContent: 'center',
+    },
+
+    alignContentStart: {
+        alignContent: 'flex-start',
+    },
+
+    alignContentEnd: {
+        alignContent: 'flex-end',
+    },
+
+    alignContentSpaceBetween: {
+        alignContent: 'space-between',
+    },
+
+    alignContentSpaceAround: {
+        alignContent: 'space-around',
+    },
+
+    alignContentSpaceEvenly: {
+        alignContent: 'space-evenly',
+    },
+
+    alignContentStretch: {
+        alignContent: 'stretch',
+    },
+
+    positionRelative: {
+        position: 'relative',
+    },
+
+    positionAbsolute: {
+        position: 'absolute',
+    },
+
+    positionFixed: {
+        position: 'fixed',
+    },
+
+    positionStatic: {
+        position: 'static',
+    },
+
+    positionSticky: {
+        position: 'sticky',
+    },
+
+    top0: {
+        top: 0,
+    },
+
+    bottom0: {
+        bottom: 0,
+    },
+
+    right5: {
+        right: '5%',
     },
 
     textCenter: {   
         textAlign: 'center',
     },
 
+    textLeft: {
+        textAlign: 'left',
+    },
+
+    textRight: {
+        textAlign: 'right',
+    },
+
+    textJustify: {
+        textAlign: 'justify',
+    },
+
+    lineHeight20: {
+        lineHeight: 20,
+    },
+
 });
+
+export default styles;
