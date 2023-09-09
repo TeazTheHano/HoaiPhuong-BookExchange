@@ -2,6 +2,10 @@ import { StyleSheet } from 'react-native';
 import { vw, vh } from 'react-native-expo-viewport-units';
 
 const styles = StyleSheet.create({
+    boxsizingBorderBox: {
+        boxSizing: 'border-box',
+    },
+
     wAuto: {
         width: 'auto',
     },
@@ -102,6 +106,11 @@ const styles = StyleSheet.create({
         width: vw(0),
     },
 
+    // height = width
+    hAuto: {
+        height: 'auto',
+    },
+
     h100: {
         height: '100%',
     },
@@ -110,12 +119,28 @@ const styles = StyleSheet.create({
         height: vh(100),
     },
 
+    h90: {
+        height: '90%',
+    },
+
+    h90vw: {
+        height: vw(90),
+    },
+
+    h90vh: {
+        height: vh(90),
+    },
+
     h80: {
         height: '80%',
     },
 
     h80vh: {
         height: vh(80),
+    },
+
+    h80vw: {
+        height: vw(80),
     },
 
     h60: {
@@ -132,6 +157,10 @@ const styles = StyleSheet.create({
 
     h50vh: {
         height: vh(50),
+    },
+
+    h45: {
+        height: '45%',
     },
 
     h40: {
@@ -170,12 +199,20 @@ const styles = StyleSheet.create({
         height: vh(20),
     },
 
+    h20vw: {
+        height: vw(20),
+    },
+
     h10: {
         height: '10%',
     },
 
     h10vh: {
         height: vh(10),
+    },
+
+    h10vw: {
+        height: vw(10),
     },
 
     h5: {
@@ -334,6 +371,49 @@ const styles = StyleSheet.create({
         marginLeft: vw(1),
     },
 
+    marginHorizontal10vw: {
+        marginLeft: vw(10),
+        marginRight: vw(10),
+    },
+
+    marginHorizontal8vw: {
+        marginLeft: vw(8),
+        marginRight: vw(8),
+    },
+
+    marginHorizontal6vw: {
+        marginLeft: vw(6),
+        marginRight: vw(6),
+    },
+
+    marginHorizontal5vw: {
+        marginLeft: vw(5),
+        marginRight: vw(5),
+    },
+
+    marginHorizontal4vw: {
+        marginLeft: vw(4),
+        marginRight: vw(4),
+    },
+
+    marginHorizontal2vw: {
+        marginLeft: vw(2),
+        marginRight: vw(2),
+    },
+
+    marginHorizontal1vw: {
+        marginLeft: vw(1),
+        marginRight: vw(1),
+    },
+
+    padding8vw: {
+        padding: vw(8),
+    },
+
+    padding6vw: {
+        padding: vw(6),
+    },
+
     padding4vw: {
         padding: vw(4),
     },
@@ -424,6 +504,14 @@ const styles = StyleSheet.create({
         paddingBottom: vw(1),
     },
 
+    borderRadius10: {
+        borderRadius: 10,
+    },
+
+    borderRadius20: {
+        borderRadius: 20,
+    },
+
     dFlex: {
         display: 'flex',
     },
@@ -460,6 +548,34 @@ const styles = StyleSheet.create({
         flex: 3,
     },
 
+    flex4: {
+        flex: 4,
+    },
+
+    flex5: {
+        flex: 5,
+    },
+
+    flex6: {
+        flex: 6,
+    },
+
+    flex7: {
+        flex: 7,
+    },
+
+    flex8: {
+        flex: 8,
+    },
+
+    flex9: {
+        flex: 9,
+    },
+
+    flex10: {
+        flex: 10,
+    },
+
     gap10vw: {
         gap: vw(10),
     },
@@ -476,6 +592,10 @@ const styles = StyleSheet.create({
         gap: vw(5),
     },
     
+    gap4vw: {
+        gap: vw(4),
+    },
+
     gap2vw: {
         gap: vw(2),
     },
@@ -608,6 +728,14 @@ const styles = StyleSheet.create({
         position: 'sticky',
     },
 
+    top4vw: {
+        top: vw(4),
+    },
+    
+    top1vw: {
+        top: vw(1),
+    },
+
     top0: {
         top: 0,
     },
@@ -618,6 +746,14 @@ const styles = StyleSheet.create({
 
     right5: {
         right: '5%',
+    },
+
+    right4vw: {
+        right: vw(4),
+    },
+
+    right1vw: {
+        right: vw(1),
     },
 
     textCenter: {   

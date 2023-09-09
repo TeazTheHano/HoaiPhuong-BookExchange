@@ -1,19 +1,56 @@
 import React from 'react';
-import { View, Text, Button, TouchableOpacity } from 'react-native';
+import { View, Text, Button, TouchableOpacity, SafeAreaView, StatusBar, ScrollView } from 'react-native';
 import { auth } from '../firebase'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+
+import { topNavBar, avataTopNavBar } from './components';
+import componentStyle, { colorStyle } from './componentStyleSheet';
+import styles from './stylesheet';
+
+import DetailsScreen from './DetailScreen';
+import LoadScreen from './LoadScreen';
+import FeedScreen from './Feed';
+import Svg, { SvgUri, SvgXml } from 'react-native-svg';
+
 
 function HomeScreen({ navigation }) {
+  const Tab = createBottomTabNavigator();
   return (
-    <View>
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('Details')}
-      />
-      <TouchableOpacity onPress={() => auth.signOut().then(() => {navigation.replace('LogReg');})}>
-        <Text>Logout</Text>
-      </TouchableOpacity>
-    </View>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarShowLabel: false,
+        headerShown: false,
+        tabBarActiveTintColor: "red",
+        tabBarInactiveTintColor: "black",
+        tabBarStyle: [
+          {
+            display: "flex"
+          },
+          null
+        ]
+
+      }}
+    >
+      <Tab.Screen name="Feed" component={FeedScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <SvgXml xml={`<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.12449 8.74988C9.95118 6.9232 11.9914 5.52362 13.3714 4.67598C14.3772 4.0582 15.6218 4.0582 16.6276 4.67598C18.0076 5.52362 20.0478 6.9232 21.8745 8.74988C25.835 12.7104 25.6245 14.9999 25.6245 18.7499C25.6245 20.5122 25.4865 21.9984 25.3401 23.0788C25.1862 24.2156 24.1947 24.9999 23.0476 24.9999H21.2495C19.8688 24.9999 18.7495 23.8806 18.7495 22.4999V19.9999C18.7495 19.0053 18.3544 18.0515 17.6511 17.3482C16.9479 16.645 15.9941 16.2499 14.9995 16.2499C14.0049 16.2499 13.0511 16.645 12.3478 17.3482C11.6446 18.0515 11.2495 19.0053 11.2495 19.9999V22.4999C11.2495 23.8806 10.1302 24.9999 8.7495 24.9999H6.95144C5.80427 24.9999 4.81281 24.2156 4.65885 23.0788C4.51253 21.9984 4.3745 20.5122 4.3745 18.7499C4.3745 14.9999 4.164 12.7104 8.12449 8.74988Z" fill="#2F2F2F"/><path d="M8.12449 8.74988C9.95118 6.9232 11.9914 5.52362 13.3714 4.67598C14.3772 4.0582 15.6218 4.0582 16.6276 4.67598C18.0076 5.52362 20.0478 6.9232 21.8745 8.74988C25.835 12.7104 25.6245 14.9999 25.6245 18.7499C25.6245 20.5122 25.4865 21.9984 25.3401 23.0788C25.1862 24.2156 24.1947 24.9999 23.0476 24.9999H21.2495C19.8688 24.9999 18.7495 23.8806 18.7495 22.4999V19.9999C18.7495 19.0053 18.3544 18.0515 17.6511 17.3482C16.9479 16.645 15.9941 16.2499 14.9995 16.2499C14.0049 16.2499 13.0511 16.645 12.3478 17.3482C11.6446 18.0515 11.2495 19.0053 11.2495 19.9999V22.4999C11.2495 23.8806 10.1302 24.9999 8.7495 24.9999H6.95144C5.80427 24.9999 4.81281 24.2156 4.65885 23.0788C4.51253 21.9984 4.3745 20.5122 4.3745 18.7499C4.3745 14.9999 4.164 12.7104 8.12449 8.74988Z" stroke="#2F2F2F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`} />
+          )
+        }} />
+      <Tab.Screen name="Detail" component={DetailsScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <SvgXml xml={`<svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.1875 3.75C5.60294 3.75 4.5 4.85294 4.5 8.4375C4.5 12.0221 5.60294 13.125 9.1875 13.125C12.7721 13.125 13.875 12.0221 13.875 8.4375C13.875 4.85294 12.7721 3.75 9.1875 3.75Z" stroke="#2F2F2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.1875 16.875C5.60294 16.875 4.5 17.9779 4.5 21.5625C4.5 25.1471 5.60294 26.25 9.1875 26.25C12.7721 26.25 13.875 25.1471 13.875 21.5625C13.875 17.9779 12.7721 16.875 9.1875 16.875Z" stroke="#2F2F2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22.3125 16.875C18.7279 16.875 17.625 17.9779 17.625 21.5625C17.625 25.1471 18.7279 26.25 22.3125 26.25C25.8971 26.25 27 25.1471 27 21.5625C27 17.9779 25.8971 16.875 22.3125 16.875Z" stroke="#2F2F2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22.3125 3.75C18.7279 3.75 17.625 4.85294 17.625 8.4375C17.625 12.0221 18.7279 13.125 22.3125 13.125C25.8971 13.125 27 12.0221 27 8.4375C27 4.85294 25.8971 3.75 22.3125 3.75Z" stroke="#2F2F2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`} />
+          )
+        }} />
+      <Tab.Screen name="Load" component={LoadScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <SvgXml xml={`<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.12449 8.74988C9.95118 6.9232 11.9914 5.52362 13.3714 4.67598C14.3772 4.0582 15.6218 4.0582 16.6276 4.67598C18.0076 5.52362 20.0478 6.9232 21.8745 8.74988C25.835 12.7104 25.6245 14.9999 25.6245 18.7499C25.6245 20.5122 25.4865 21.9984 25.3401 23.0788C25.1862 24.2156 24.1947 24.9999 23.0476 24.9999H21.2495C19.8688 24.9999 18.7495 23.8806 18.7495 22.4999V19.9999C18.7495 19.0053 18.3544 18.0515 17.6511 17.3482C16.9479 16.645 15.9941 16.2499 14.9995 16.2499C14.0049 16.2499 13.0511 16.645 12.3478 17.3482C11.6446 18.0515 11.2495 19.0053 11.2495 19.9999V22.4999C11.2495 23.8806 10.1302 24.9999 8.7495 24.9999H6.95144C5.80427 24.9999 4.81281 24.2156 4.65885 23.0788C4.51253 21.9984 4.3745 20.5122 4.3745 18.7499C4.3745 14.9999 4.164 12.7104 8.12449 8.74988Z" fill="#2F2F2F"/><path d="M8.12449 8.74988C9.95118 6.9232 11.9914 5.52362 13.3714 4.67598C14.3772 4.0582 15.6218 4.0582 16.6276 4.67598C18.0076 5.52362 20.0478 6.9232 21.8745 8.74988C25.835 12.7104 25.6245 14.9999 25.6245 18.7499C25.6245 20.5122 25.4865 21.9984 25.3401 23.0788C25.1862 24.2156 24.1947 24.9999 23.0476 24.9999H21.2495C19.8688 24.9999 18.7495 23.8806 18.7495 22.4999V19.9999C18.7495 19.0053 18.3544 18.0515 17.6511 17.3482C16.9479 16.645 15.9941 16.2499 14.9995 16.2499C14.0049 16.2499 13.0511 16.645 12.3478 17.3482C11.6446 18.0515 11.2495 19.0053 11.2495 19.9999V22.4999C11.2495 23.8806 10.1302 24.9999 8.7495 24.9999H6.95144C5.80427 24.9999 4.81281 24.2156 4.65885 23.0788C4.51253 21.9984 4.3745 20.5122 4.3745 18.7499C4.3745 14.9999 4.164 12.7104 8.12449 8.74988Z" stroke="#2F2F2F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`} />
+          )
+        }} />
+    </Tab.Navigator>
   );
 }
 

@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 
 function DetailsScreen() {
   return (
-    <View>
+    <View style={{backgroundColor:'red'}}>
       <Text>Details Screen</Text>
     </View>
   );

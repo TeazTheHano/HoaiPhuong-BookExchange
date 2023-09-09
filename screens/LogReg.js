@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 // Import firebase
 import { auth, firestore } from '../firebase'
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -42,7 +42,20 @@ function LogReg() {
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((authUser) => {
             if (authUser) {
-                navigation.navigate('Verify');
+                const user = auth.currentUser;
+                const db = firestore;
+                const docRef = doc(db, "userList", user.uid);
+                getDoc(docRef).then((docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (data.CCCD === true) {
+                            navigation.navigate('Home');
+                        } else {
+                            navigation.navigate('Verify');
+                        }
+                    } else {
+                    }
+                });
             }
         });
         return unsubscribe;
@@ -51,23 +64,23 @@ function LogReg() {
     const signIn = () => {
         if (isChecked) {
             signInWithEmailAndPassword(auth, loginEmail, loginPassword)
-            .catch((error) => alert(error));
+                .catch((error) => alert(error));
         } else {
             alert('Bạn chưa đồng ý với điều khoản của chúng tôi');
-        }   
+        }
     }
 
     const register = () => {
         if (isChecked) {
             createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
-            .then((authUser) => {
-                setDoc(doc(firestore, "userList", authUser.user.uid), {
-                    name: name,
-                    email: registerEmail,
-                    password: registerPassword,
+                .then((authUser) => {
+                    setDoc(doc(firestore, "userList", authUser.user.uid), {
+                        name: name,
+                        email: registerEmail,
+                        password: registerPassword,
+                    })
                 })
-            })
-            .catch((error) => alert(error));
+                .catch((error) => alert(error));
         } else {
             alert('Bạn chưa đồng ý với điều khoản của chúng tôi');
         }
@@ -98,6 +111,8 @@ function LogReg() {
     const toggleShowPassword = () => {
         setIsShowPassword(!isShowPassword);
     }
+
+    // check field CCCD in firebase userList
 
     const renderScreen = () => {
         if (isLoginScreen) {
@@ -150,13 +165,12 @@ function LogReg() {
                 </View>
             )
         } else {
-            console.log('register');
             return (
                 <View style={[styles.dFlex, styles.flexCol, styles.justifyContentSpaceBetween, styles.flex3]}>
                     <View style={[componentStyle.formContainer, styles.positionRelative]}>
                         <Text style={[componentStyle.nunito, styles.textCenter]}>Tạo tài khoản</Text>
                         <View style={componentStyle.loginInput}>
-                            <SvgXml xml={`<svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none"><mask id="mask0_1545_3001" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="4" y="13" width="15" height="7"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.17145 13.1841H18.8045V19.6363H4.17145V13.1841Z" fill="white"/></mask><g mask="url(#mask0_1545_3001)"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.4889 14.4966C7.5525 14.4966 5.55707 15.1371 5.55707 16.4015C5.55707 17.6772 7.5525 18.3238 11.4889 18.3238C15.4243 18.3238 17.4188 17.6833 17.4188 16.419C17.4188 15.1432 15.4243 14.4966 11.4889 14.4966M11.4889 19.6363C9.67911 19.6363 4.17136 19.6363 4.17136 16.4015C4.17136 13.5175 8.3479 13.1841 11.4889 13.1841C13.2986 13.1841 18.8045 13.1841 18.8045 16.419C18.8045 19.303 14.6289 19.6363 11.4889 19.6363" fill="#1D2C40"/></g><mask id="mask1_1545_3001" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="6" y="2" width="11" height="10"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.58246 2.25012H16.3933V11.5414H6.58246V2.25012Z" fill="white"/></mask><g mask="url(#mask1_1545_3001)"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.4888 3.49926C9.51097 3.49926 7.9017 5.02263 7.9017 6.89601C7.89523 8.76326 9.4925 10.2858 11.4621 10.2928L11.4888 10.9175V10.2928C13.4658 10.2928 15.0742 8.76851 15.0742 6.89601C15.0742 5.02263 13.4658 3.49926 11.4888 3.49926M11.4888 11.5414H11.4593C8.75991 11.5335 6.57325 9.44838 6.58249 6.89338C6.58249 4.33401 8.783 2.24976 11.4888 2.24976C14.1938 2.24976 16.3933 4.33401 16.3933 6.89601C16.3933 9.45801 14.1938 11.5414 11.4888 11.5414" fill="#1D2C40"/></g></svg>`}/>
+                            <SvgXml xml={`<svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none"><mask id="mask0_1545_3001" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="4" y="13" width="15" height="7"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.17145 13.1841H18.8045V19.6363H4.17145V13.1841Z" fill="white"/></mask><g mask="url(#mask0_1545_3001)"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.4889 14.4966C7.5525 14.4966 5.55707 15.1371 5.55707 16.4015C5.55707 17.6772 7.5525 18.3238 11.4889 18.3238C15.4243 18.3238 17.4188 17.6833 17.4188 16.419C17.4188 15.1432 15.4243 14.4966 11.4889 14.4966M11.4889 19.6363C9.67911 19.6363 4.17136 19.6363 4.17136 16.4015C4.17136 13.5175 8.3479 13.1841 11.4889 13.1841C13.2986 13.1841 18.8045 13.1841 18.8045 16.419C18.8045 19.303 14.6289 19.6363 11.4889 19.6363" fill="#1D2C40"/></g><mask id="mask1_1545_3001" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="6" y="2" width="11" height="10"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.58246 2.25012H16.3933V11.5414H6.58246V2.25012Z" fill="white"/></mask><g mask="url(#mask1_1545_3001)"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.4888 3.49926C9.51097 3.49926 7.9017 5.02263 7.9017 6.89601C7.89523 8.76326 9.4925 10.2858 11.4621 10.2928L11.4888 10.9175V10.2928C13.4658 10.2928 15.0742 8.76851 15.0742 6.89601C15.0742 5.02263 13.4658 3.49926 11.4888 3.49926M11.4888 11.5414H11.4593C8.75991 11.5335 6.57325 9.44838 6.58249 6.89338C6.58249 4.33401 8.783 2.24976 11.4888 2.24976C14.1938 2.24976 16.3933 4.33401 16.3933 6.89601C16.3933 9.45801 14.1938 11.5414 11.4888 11.5414" fill="#1D2C40"/></g></svg>`} />
                             <TextInput
                                 style={componentStyle.loginInputText}
                                 placeholder="Tên của bạn"
@@ -165,16 +179,16 @@ function LogReg() {
                             />
                         </View>
                         <View style={componentStyle.loginInput}>
-                            <SvgXml xml={`<svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.1774 8.36739C11.4531 11.4691 12.1962 7.88075 14.2819 9.85483C16.2926 11.7588 17.4482 12.1402 14.9007 14.5525C14.5816 14.7954 12.5541 17.7177 5.42886 10.9708C-1.69727 4.22308 1.38625 2.30076 1.64277 1.9986C4.1965 -0.420369 4.5923 0.680604 6.60303 2.58456C8.68868 4.55947 4.90171 5.26563 8.1774 8.36739Z" stroke="#1D2C40" stroke-linecap="round" stroke-linejoin="round"/></svg>`}/>
+                            <SvgXml xml={`<svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.1774 8.36739C11.4531 11.4691 12.1962 7.88075 14.2819 9.85483C16.2926 11.7588 17.4482 12.1402 14.9007 14.5525C14.5816 14.7954 12.5541 17.7177 5.42886 10.9708C-1.69727 4.22308 1.38625 2.30076 1.64277 1.9986C4.1965 -0.420369 4.5923 0.680604 6.60303 2.58456C8.68868 4.55947 4.90171 5.26563 8.1774 8.36739Z" stroke="#1D2C40" stroke-linecap="round" stroke-linejoin="round"/></svg>`} />
                             <TextInput
                                 style={componentStyle.loginInputText}
                                 placeholder="Số điện thoại"
-                                // onChangeText={text => setName(text)}
-                                // value={name}
+                            // onChangeText={text => setName(text)}
+                            // value={name}
                             />
                         </View>
                         <View style={componentStyle.loginInput}>
-                            <SvgXml xml={`<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M13.4269 6.63837L10.0945 9.34815C9.46486 9.84765 8.57902 9.84765 7.94939 9.34815L4.58881 6.63837" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.6816 15.75C14.9627 15.7563 16.5 13.8822 16.5 11.5788V6.42751C16.5 4.12412 14.9627 2.25 12.6816 2.25H5.31835C3.03734 2.25 1.5 4.12412 1.5 6.42751V11.5788C1.5 13.8822 3.03734 15.7563 5.31835 15.75H12.6816Z" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`}/>
+                            <SvgXml xml={`<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M13.4269 6.63837L10.0945 9.34815C9.46486 9.84765 8.57902 9.84765 7.94939 9.34815L4.58881 6.63837" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.6816 15.75C14.9627 15.7563 16.5 13.8822 16.5 11.5788V6.42751C16.5 4.12412 14.9627 2.25 12.6816 2.25H5.31835C3.03734 2.25 1.5 4.12412 1.5 6.42751V11.5788C1.5 13.8822 3.03734 15.7563 5.31835 15.75H12.6816Z" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`} />
                             <TextInput
                                 style={componentStyle.loginInputText}
                                 placeholder="Email"
@@ -183,15 +197,18 @@ function LogReg() {
                             />
                         </View>
                         <View style={componentStyle.loginInput}>
-                            <SvgXml xml={`<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M12.3175 7.08585V5.4756C12.3175 3.59085 10.789 2.06235 8.90428 2.06235C7.01953 2.0541 5.48503 3.5751 5.47678 5.4606V5.4756V7.08585" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path fill-rule="evenodd" clip-rule="evenodd" d="M11.7624 15.9372H6.03165C4.46115 15.9372 3.18765 14.6645 3.18765 13.0932V9.87647C3.18765 8.30522 4.46115 7.03247 6.03165 7.03247H11.7624C13.3329 7.03247 14.6064 8.30522 14.6064 9.87647V13.0932C14.6064 14.6645 13.3329 15.9372 11.7624 15.9372Z" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.89719 10.652V12.3178" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`}/>
+                            <SvgXml xml={`<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M12.3175 7.08585V5.4756C12.3175 3.59085 10.789 2.06235 8.90428 2.06235C7.01953 2.0541 5.48503 3.5751 5.47678 5.4606V5.4756V7.08585" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path fill-rule="evenodd" clip-rule="evenodd" d="M11.7624 15.9372H6.03165C4.46115 15.9372 3.18765 14.6645 3.18765 13.0932V9.87647C3.18765 8.30522 4.46115 7.03247 6.03165 7.03247H11.7624C13.3329 7.03247 14.6064 8.30522 14.6064 9.87647V13.0932C14.6064 14.6645 13.3329 15.9372 11.7624 15.9372Z" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.89719 10.652V12.3178" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`} />
                             <TextInput
                                 style={componentStyle.loginInputText}
                                 placeholder="Mật khẩu"
                                 onChangeText={text => setRegisterPassword(text)}
                                 value={registerPassword}
-                                secureTextEntry
                                 textContentType="password"
+                                secureTextEntry={!isShowPassword ? true : false}
                             />
+                            <TouchableOpacity onPress={toggleShowPassword} style={[styles.positionAbsolute, styles.right5]}>
+                                <SvgXml xml={`<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7.32046 10.7751C6.88921 10.3446 6.62671 9.75963 6.62671 9.10338C6.62671 7.78863 7.68571 6.72888 8.99971 6.72888C9.64996 6.72888 10.2485 6.99213 10.6722 7.42263" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.3286 9.52417C11.1546 10.4917 10.3926 11.2552 9.42586 11.4307" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.99096 13.1042C3.80071 12.1697 2.79271 10.8047 2.06221 9.10298C2.80021 7.39373 3.81496 6.02123 5.01271 5.07923C6.20296 4.13723 7.57621 3.62573 8.99971 3.62573C10.4315 3.62573 11.804 4.14473 13.0017 5.09348" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.5857 6.74316C15.1017 7.42866 15.5555 8.21991 15.9372 9.10266C14.462 12.5204 11.855 14.5792 8.99971 14.5792C8.35246 14.5792 7.71421 14.4742 7.10071 14.2694" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.9153 3.18726L3.08476 15.0178" stroke="#1D2C40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`} />
+                            </TouchableOpacity>
                         </View>
                         <View style={[styles.dFlex, styles.flexRow, styles.gap2vw, styles.alignSelfCenter, styles.alignItemsCenter]}>
                             {/* checkbox */}
@@ -256,8 +273,8 @@ function LogReg() {
                     </View>
                 </View>
                 <View style={[styles.dFlex, styles.flexRow, styles.alignItemsCenter, styles.alignSelfCenter]}>
-                    <Text>{isLoginScreen? `Bạn chưa có tài khoản? ` : `Bạn đã có tài khoản? `}</Text>
-                    <TouchableOpacity onPress={() => { toggleLogin() }}><Text style={{ color: '#123ADA', fontWeight: 'bold' }}>{isLoginScreen? `Đăng ký` : `Đăng nhập`}</Text></TouchableOpacity>
+                    <Text>{isLoginScreen ? `Bạn chưa có tài khoản? ` : `Bạn đã có tài khoản? `}</Text>
+                    <TouchableOpacity onPress={() => { toggleLogin() }}><Text style={{ color: '#123ADA', fontWeight: 'bold' }}>{isLoginScreen ? `Đăng ký` : `Đăng nhập`}</Text></TouchableOpacity>
                 </View>
             </View>
 

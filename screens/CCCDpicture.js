@@ -4,6 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Camera, CameraType } from 'expo-camera';
 
+// Import firebase
+import { auth, firestore } from '../firebase'
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+
 // Import the custom CSS
 import styles from './stylesheet';
 import componentStyle, { useCustomFonts, colorStyle } from './componentStyleSheet';
@@ -119,12 +123,29 @@ function CCCDpicture() {
                     >
                         <Text style={[styles.textCenter, componentStyle.fsLight14LineHeight18, { color: colorStyle.colorBlue }]}>Thông tin chưa chính xác? Chụp lại hình</Text>
                     </TouchableOpacity>
-                    {submitBtnComponent("Xong", colorStyle.color1, 'white', 'white', () => { navigation.navigate('Home') })}
+                    {submitBtnComponent("Xong", colorStyle.color1, 'white', 'white', () => { markCCCDonDB(), navigation.navigate('Home') })}
                 </View>
             </View>
         );
     }
 
+    const markCCCDonDB = async () => {
+        const user = auth.currentUser;
+        const db = firestore; 
+        const docRef = doc(db, "userList", user.uid);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+            const newFields = {
+                CCCD: true,
+            };
+            
+            await updateDoc(docRef, newFields);
+        } else {
+            console.log("CCCDpicture Ln133 No such document!");
+        }
+    };
+    
     const switchStep = () => {
         switch (step) {
             case 0:

@@ -113,6 +113,30 @@ const componentStyle = StyleSheet.create({
         lineHeight: 24,
     },
 
+    LibreBold20LineHeight20: {
+        fontFamily: 'LibreBodoni_700Bold',
+        fontSize: 20,
+        lineHeight: 20,
+    },
+
+    LibreBold18LineHeight20: {
+        fontFamily: 'LibreBodoni_700Bold',
+        fontSize: 18,
+        lineHeight: 20,
+    },
+
+    LibreNormal14LineHeight16: {
+        fontFamily: 'LibreBodoni_400Regular',
+        fontSize: 14,
+        lineHeight: 16,
+    },
+        
+    LibreNormal10LineHeight14: {
+        fontFamily: 'LibreBodoni_400Regular',
+        fontSize: 10,
+        lineHeight: 14,
+    },
+
     fs24BoldLineHeight33: {
         fontFamily: 'fsBold',
         fontSize: 24,
@@ -123,6 +147,12 @@ const componentStyle = StyleSheet.create({
         fontFamily: 'fsLight',
         fontSize: 16,
         lineHeight: 24,
+    },
+
+    fsLight16LineHeight16: {
+        fontFamily: 'fsLight',
+        fontSize: 16,
+        lineHeight: 16,
     },
     
     fsBold16LineHeight24: {
@@ -135,6 +165,12 @@ const componentStyle = StyleSheet.create({
         fontFamily: 'fsLight',
         fontSize: 14,
         lineHeight: 18,
+    },
+
+    fsLight10LineHeight14: {
+        fontFamily: 'fsLight',
+        fontSize: 10,
+        lineHeight: 14,
     },
 
     // login/register screen
