@@ -149,6 +149,12 @@ const componentStyle = StyleSheet.create({
         lineHeight: 24,
     },
 
+    fsLight18LineHeight20: {
+        fontFamily: 'fsLight',
+        fontSize: 18,
+        lineHeight: 20,
+    },
+
     fsLight16LineHeight16: {
         fontFamily: 'fsLight',
         fontSize: 16,

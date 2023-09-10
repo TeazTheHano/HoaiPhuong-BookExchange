@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 // Import firebase
 import { auth, firestore } from '../firebase'
-import { doc, setDoc, getDoc, collection, getDocs } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, getDocs, updateDoc } from "firebase/firestore";
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -77,38 +77,34 @@ const fetchBookData = async (bookId) => {
 };
 
 export const FeedSliceBanner = (borderRadius) => {
-    const [bookList, setBookList] = useState({});
     const [DATA, setDATA] = useState([]);
 
     useEffect(() => {
-        fetchAllBookIDs().then((bookIds) => {
-            const bookList = {};
-            bookIds.forEach((bookId) => {
-                fetchBookData(bookId).then((bookData) => {
+        const fetchData = async () => {
+            try {
+                const bookIds = await fetchAllBookIDs();
+                const bookList = {};
+
+                await Promise.all(bookIds.map(async (bookId) => {
+                    const bookData = await fetchBookData(bookId);
                     bookList[bookId] = bookData;
-                    setBookList(bookList);
-                    console.log('90', bookList);
-                });
-            });
-        }).then(() => {
-            const data = [];
-            Object.keys(bookList).forEach((bookId) => {
-                data.push({
+                }));
+
+                const data = Object.keys(bookList).map((bookId) => ({
                     id: bookId,
                     title: bookList[bookId].title,
                     text: bookList[bookId].author,
                     image: { uri: `${bookList[bookId].image}` },
                     distance: bookList[bookId].distance,
                     owner: bookList[bookId].owner,
-                });
-            });
-            console.log('103', data);
-            return data;
-        }).then((data) => {
-            setDATA(data);
-            console.log('107', DATA);
-        });
+                }));
 
+                setDATA(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchData();
     }, []);
 
     const Item = ({ title, text, image, distance, owner }, borderRadius) => (
@@ -152,58 +148,104 @@ export const FeedSliceBanner = (borderRadius) => {
 }
 
 export const FlatListBook2Col = (borderRadius) => {
-    const [bookList, setBookList] = useState({});
+    const [numberOfItemsToRender, setNumberOfItemsToRender] = useState(4);
     const [DATA, setDATA] = useState([]);
+    const [bookmark, setBookmark] = useState(false);
 
     useEffect(() => {
-        fetchAllBookIDs().then((bookIds) => {
-            const bookList = {};
-            bookIds.forEach((bookId) => {
-                fetchBookData(bookId).then((bookData) => {
+        const fetchData = async () => {
+            try {
+                const bookIds = await fetchAllBookIDs();
+                const bookList = {};
+
+                await Promise.all(bookIds.map(async (bookId) => {
+                    const bookData = await fetchBookData(bookId);
                     bookList[bookId] = bookData;
-                    setBookList(bookList);
-                    console.log('90', bookList);
-                });
-            });
-        }).then(() => {
-            const data = [];
-            Object.keys(bookList).forEach((bookId) => {
-                data.push({
+                }));
+
+                const data = Object.keys(bookList).map((bookId) => ({
                     id: bookId,
                     title: bookList[bookId].title,
-                    text: bookList[bookId].author,
+                    author: bookList[bookId].author,
                     image: { uri: `${bookList[bookId].image}` },
                     distance: bookList[bookId].distance,
                     owner: bookList[bookId].owner,
-                });
-            });
-            console.log('103', data);
-            return data;
-        }).then((data) => {
-            setDATA(data);
-            console.log('107', DATA);
-        });
+                    quantity: bookList[bookId].quantity,
+                    category: bookList[bookId].category,
+                    bookmark: bookList[bookId].bookmark,
+                }));
 
+                setDATA(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+        fetchData();
     }, []);
 
+    const toggleBookmark = async (itemId) => {
+        try {
+            const bookRef = doc(firestore, 'books', itemId); // Assuming 'books' is your Firestore collection
+
+            // Get the current bookmark state from Firestore
+            const docSnapshot = await getDoc(bookRef);
+            const currentBookmarkState = docSnapshot.data().bookmark;
+    
+            // Update the bookmark state by toggling it
+            await updateDoc(bookRef, {
+                bookmark: !currentBookmarkState,
+            });
+    
+            // Update the local state (DATA) to reflect the change
+            setDATA((prevData) => {
+                return prevData.map((item) => {
+                    if (item.id === itemId) {
+                        return { ...item, bookmark: !currentBookmarkState };
+                    }
+                    return item;
+                });
+            });
+        } catch (error) {
+            console.error('Error toggling bookmark:', error);
+        }
+    };
+
     return (
-        <View style={[styles.dFlex, styles.flexRow, styles.gap2vw, styles.flexRow, styles.w90vw, styles.hAuto, styles.alignSelfCenter]}>
-            {DATA.map((item) => {
-                return (
-                    <View
-                        key={item.id}
-                        style={[styles.w40vw, styles.h80vw, { backgroundColor: '#F5EFE1', borderColor: 'black', borderWidth: 1, borderRadius: `${borderRadius}`, shadowRadius: '20', shadowColor: '#00000033', shadowOpacity: 0.5, shadowOffset: { width: 0, height: 0 }, shadowRadius: 20, elevation: 5 }]}
-                    >
-                        <Image source={item.image} style={[styles.w90, styles.h45, styles.alignSelfCenter, { margin: '5%', borderRadius: `${borderRadius - vw(1)}` }]} />
-                        <View>
-                            <Text style={[componentStyle.LibreBold18LineHeight20]}>{item.title}</Text>
-                            <Text style={[componentStyle.fsLight10LineHeight14, { color: '#858585' }]}>Văn học nước ngoài</Text>
-                            <Text style={[componentStyle.fsLight10LineHeight14,]}>{item.text}</Text>
+        <View>
+            <View style={[styles.dFlex, styles.flexRow, styles.flexWrap, styles.w100vw, styles.justifyContentSpaceEvenly, styles.hAuto, styles.alignSelfCenter, { rowGap: vw(6) }]}>
+                {DATA.slice(0, numberOfItemsToRender).map((item) => {
+                    return (
+                        <View
+                            key={item.id}
+                            style={[styles.w45vw, styles.dFlex, styles.flexCol, styles.justifyContentCenter, styles.gap2vw, styles.paddingV2vw, styles.positionRelative, { backgroundColor: '#F5EFE1', borderRadius: `${borderRadius}`, }]}
+                        >
+                            <Image source={item.image} style={[styles.w40vw, styles.h40vw, styles.alignSelfCenter, { margin: '5%', borderRadius: `${borderRadius - vw(1)}` }]} />
+                            <View style={[styles.w90, styles.h20vw, styles.alignSelfCenter, styles.dFlex, styles.flexCol, styles.justifyContentSpaceBetween]}>
+                                <Text numberOfLines={2} ellipsizeMode='tail' style={[componentStyle.LibreBold18LineHeight20]}>{item.title}</Text>
+                                <View>
+                                    <Text numberOfLines={1} ellipsizeMode='tail' style={[componentStyle.fsLight10LineHeight14, { color: '#858585', }]}>{item.category}</Text>
+                                    <Text numberOfLines={1} ellipsizeMode='tail' style={[componentStyle.LibreNormal10LineHeight14,]}>Tác giả: {item.author}</Text>
+                                    <Text numberOfLines={1} ellipsizeMode='tail' style={[componentStyle.LibreNormal10LineHeight14,]}>Số lượng: {item.quantity}</Text>
+                                </View>
+                            </View>
+                            <TouchableOpacity onPress={() => { toggleBookmark(item.id) }} style={[styles.positionAbsolute, styles.padding1vw, { bottom: vw(2), right: vw(2), backgroundColor: '#00000033', borderRadius: '6%' }]}>
+                                <SvgXml fill={
+                                    item.bookmark ? `black` : `none`
+                                } xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 8C6 5.18536 8 4 12 4C16 4 18 5.18537 18 8V19.0858C18 19.9767 16.9229 20.4229 16.2929 19.7929L12.7071 16.2071C12.3166 15.8166 11.6834 15.8166 11.2929 16.2071L7.70711 19.7929C7.07714 20.4229 6 19.9767 6 19.0858V8Z" stroke="#2F2F2F" stroke-linecap="round" stroke-linejoin="round"/></svg>`} />
+                            </TouchableOpacity>
                         </View>
-                    </View>
-                )
-            })
-            }
+                    )
+                })
+                }
+            </View>
+
+            <TouchableOpacity
+                onPress={() => { setNumberOfItemsToRender(DATA.length) }}
+                style={[styles.alignSelfCenter, styles.w60, styles.hAuto, styles.dFlex, styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.paddingV4vw, styles.marginTop6vw, { backgroundColor: '#F5EFE1', borderRadius: `${borderRadius}`, }]}
+            >
+                <Text style={[componentStyle.fsLight18LineHeight20]}>Xem thêm</Text>
+            </TouchableOpacity>
+
         </View>
     )
 }
@@ -248,7 +290,7 @@ export const avataTopNavBar = (heading, textColor, bgColor, envColor) => {
             }]}>
                 <View style={[styles.dFlex, styles.flexNoWrap, styles.flexRow, styles.gap4vw, styles.alignContentCenter]}>
                     {/* import svg from file */}
-                    <Image source={require('../assets/images/avata.png')} style={[{height: vw(15), width: vw(15)}]} />
+                    <Image source={require('../assets/images/avata.png')} style={[{ height: vw(15), width: vw(15) }]} />
                     <View style={[styles.dFlex, styles.flexCol, styles.justifyContentCenter]}>
                         <Text style={[componentStyle.LibreBold20LineHeight122, styles.paddingV1vw, { color: `${textColor}` }]}>Chào {userName}</Text>
                         <Text style={[componentStyle.fsLight16LineHeight16, styles.paddingV1vw, { color: `${textColor}` }]}>{heading}</Text>

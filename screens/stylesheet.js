@@ -50,6 +50,14 @@ const styles = StyleSheet.create({
         width: vw(50),
     },
 
+    w45: {
+        width: '45%',
+    },
+
+    w45vw: {
+        width: vw(45),
+    },
+
     w40: {
         width: '40%',
     },
