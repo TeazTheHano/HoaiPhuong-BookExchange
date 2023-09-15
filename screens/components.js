@@ -15,6 +15,7 @@ import componentStyle, { useCustomFonts, colorStyle } from './componentStyleShee
 
 // Import local Icon
 import Svg, { SvgUri, SvgXml } from 'react-native-svg';
+import FirstRingSVG from '../assets/svg/1stRingSVG';
 
 // Import API
 import Checkbox from 'expo-checkbox';
@@ -22,7 +23,10 @@ import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { BlurView } from 'expo-blur';
 import { vw, vh, vmax, vmin } from 'react-native-expo-viewport-units';
 
-// fecth from Firebase
+/**
+ * REUSEABLE FUNCTION
+ * @returns Trả về thông tin user
+ */
 const fetchUserData = async () => {
     try {
         const user = auth.currentUser;
@@ -39,6 +43,10 @@ const fetchUserData = async () => {
     return null;
 };
 
+/**
+ * REUSEABLE FUNCTION
+ * @returns Trả về danh sách ID sách
+ */
 const fetchAllBookIDs = async () => {
     try {
         const db = firestore;
@@ -48,9 +56,7 @@ const fetchAllBookIDs = async () => {
         const bookIds = [];
 
         querySnapshot.forEach((doc) => {
-            console.log('50', doc.id, " => ", doc.data());
             bookIds.push(doc.id);
-            console.log('52', bookIds);
         });
 
         return bookIds;
@@ -60,6 +66,11 @@ const fetchAllBookIDs = async () => {
     }
 };
 
+/**
+ * REUSEABLE FUNCTION
+ * @param {*} bookId 
+ * @returns Trả về dữ liệu của một cuốn sách
+ */
 const fetchBookData = async (bookId) => {
     try {
         const db = firestore;
@@ -67,7 +78,6 @@ const fetchBookData = async (bookId) => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            console.log('69', docSnap.data());
             return docSnap.data();
         }
     } catch (error) {
@@ -76,6 +86,108 @@ const fetchBookData = async (bookId) => {
     return null;
 };
 
+// Function to fetch document IDs by collection name
+/**
+ * REUSEABLE FUNCTION
+ * @param {string} collectionName : Tên của collection trong Firestore
+ * @returns trả về mảng ID của các document trong collection
+ */
+const fetchDocumentIDs = async (collectionName) => {
+    try {
+        const db = firestore;
+        const documentCollection = collection(db, collectionName);
+        const querySnapshot = await getDocs(documentCollection);
+
+        const documentIDs = [];
+
+        querySnapshot.forEach((doc) => {
+            documentIDs.push(doc.id);
+        });
+
+        return documentIDs;
+    } catch (error) {
+        console.error(`Error fetching ${collectionName} IDs:`, error);
+        return [];
+    }
+};
+
+// Function to fetch document data by ID
+/**
+ * REUSEABLE FUNCTION
+ * @param {string} collectionName : Tên của collection trong Firestore
+ * @param {string} documentID : ID của document trong collection
+ * @returns trả về object dữ liệu của document
+ */
+const fetchDocumentData = async (collectionName, documentID) => {
+    try {
+        const db = firestore;
+        const documentRef = doc(db, collectionName, documentID);
+        const docSnap = await getDoc(documentRef);
+
+        if (docSnap.exists()) {
+            return docSnap.data();
+        }
+    } catch (error) {
+        console.error(`Error fetching ${collectionName} document (${documentID}):`, error);
+    }
+    return null;
+};
+
+/**
+ * REUSEABLE FUNCTION
+ * @param {string} documentName : Tên của collection trong Firestore
+ * @param {Array} objectProperties : Các field cần lấy trong collection
+ * @returns trả về mảng object dữ liệu của các document trong collection
+ */
+const RenderThings = (documentName, objectProperties) => {
+    const [DATA, setDATA] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const documentIDs = await fetchDocumentIDs(documentName);
+                const docList = {};
+
+                await Promise.all(documentIDs.map(async (documentID) => {
+                    const docData = await fetchDocumentData(documentName, documentID);
+                    docList[documentID] = docData;
+                }));
+
+                const data = Object.keys(docList).map((docID) => {
+                    const item = {
+                        id: docID,
+                    };
+
+                    for (const prop of objectProperties) {
+                        if (prop === 'image' || prop === 'avatar') {
+                            item[prop] = { uri: `${docList[docID][prop]}` };
+                        } else {
+                            item[prop] = docList[docID][prop];
+                        }
+                    }
+
+                    return item;
+                });
+
+                setDATA(data);
+            } catch (error) {
+                console.error(`Error fetching ${documentName} data:`, error);
+            }
+        };
+        fetchData();
+    }, [documentName, objectProperties]);
+
+    // Add your toggleBookmark or other functions here if needed
+
+    return {
+        DATA,
+    };
+};
+
+/**
+ * dùng ở FeedScreen
+ * @param {*} borderRadius 
+ * @returns Trả về màn hình slide sách
+ */
 export const FeedSliceBanner = (borderRadius) => {
     const [DATA, setDATA] = useState([]);
 
@@ -108,7 +220,7 @@ export const FeedSliceBanner = (borderRadius) => {
     }, []);
 
     const Item = ({ title, text, image, distance, owner }, borderRadius) => (
-        <View style={[styles.positionRelative, styles.w90vw, styles.h100, { backgroundColor: 'black', borderRadius: `${borderRadius}` }]}
+        <View style={[styles.positionRelative, styles.w90vw, styles.h100, { backgroundColor: 'black', borderRadius: 16 }]}
         >
             <ImageBackground
                 source={image} style={[styles.flex1]}>
@@ -147,6 +259,11 @@ export const FeedSliceBanner = (borderRadius) => {
     )
 }
 
+/**
+ * dùng ở FeedScreen
+ * @param {*} borderRadius 
+ * @returns Trả về một danh sách các cuốn sách được hiển thị dưới dạng lưới 2 cột
+ */
 export const FlatListBook2Col = (borderRadius) => {
     const [numberOfItemsToRender, setNumberOfItemsToRender] = useState(4);
     const [DATA, setDATA] = useState([]);
@@ -190,12 +307,12 @@ export const FlatListBook2Col = (borderRadius) => {
             // Get the current bookmark state from Firestore
             const docSnapshot = await getDoc(bookRef);
             const currentBookmarkState = docSnapshot.data().bookmark;
-    
+
             // Update the bookmark state by toggling it
             await updateDoc(bookRef, {
                 bookmark: !currentBookmarkState,
             });
-    
+
             // Update the local state (DATA) to reflect the change
             setDATA((prevData) => {
                 return prevData.map((item) => {
@@ -217,9 +334,9 @@ export const FlatListBook2Col = (borderRadius) => {
                     return (
                         <View
                             key={item.id}
-                            style={[styles.w45vw, styles.dFlex, styles.flexCol, styles.justifyContentCenter, styles.gap2vw, styles.paddingV2vw, styles.positionRelative, { backgroundColor: '#F5EFE1', borderRadius: `${borderRadius}`, }]}
+                            style={[styles.w45vw, styles.dFlex, styles.flexCol, styles.justifyContentCenter, styles.gap2vw, styles.paddingV2vw, styles.positionRelative, { backgroundColor: '#F5EFE1', borderRadius: 16, }]}
                         >
-                            <Image source={item.image} style={[styles.w40vw, styles.h40vw, styles.alignSelfCenter, { margin: '5%', borderRadius: `${borderRadius - vw(1)}` }]} />
+                            <Image source={item.image} style={[styles.w40vw, styles.h40vw, styles.alignSelfCenter, { margin: '5%', borderRadius: 10 }]} />
                             <View style={[styles.w90, styles.h20vw, styles.alignSelfCenter, styles.dFlex, styles.flexCol, styles.justifyContentSpaceBetween]}>
                                 <Text numberOfLines={2} ellipsizeMode='tail' style={[componentStyle.LibreBold18LineHeight20]}>{item.title}</Text>
                                 <View>
@@ -228,7 +345,7 @@ export const FlatListBook2Col = (borderRadius) => {
                                     <Text numberOfLines={1} ellipsizeMode='tail' style={[componentStyle.LibreNormal10LineHeight14,]}>Số lượng: {item.quantity}</Text>
                                 </View>
                             </View>
-                            <TouchableOpacity onPress={() => { toggleBookmark(item.id) }} style={[styles.positionAbsolute, styles.padding1vw, { bottom: vw(2), right: vw(2), backgroundColor: '#00000033', borderRadius: '6%' }]}>
+                            <TouchableOpacity onPress={() => { toggleBookmark(item.id) }} style={[styles.positionAbsolute, styles.padding1vw, { bottom: vw(2), right: vw(2), backgroundColor: '#00000033', borderRadius: 10 }]}>
                                 <SvgXml fill={
                                     item.bookmark ? `black` : `none`
                                 } xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 8C6 5.18536 8 4 12 4C16 4 18 5.18537 18 8V19.0858C18 19.9767 16.9229 20.4229 16.2929 19.7929L12.7071 16.2071C12.3166 15.8166 11.6834 15.8166 11.2929 16.2071L7.70711 19.7929C7.07714 20.4229 6 19.9767 6 19.0858V8Z" stroke="#2F2F2F" stroke-linecap="round" stroke-linejoin="round"/></svg>`} />
@@ -241,7 +358,7 @@ export const FlatListBook2Col = (borderRadius) => {
 
             <TouchableOpacity
                 onPress={() => { setNumberOfItemsToRender(DATA.length) }}
-                style={[styles.alignSelfCenter, styles.w60, styles.hAuto, styles.dFlex, styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.paddingV4vw, styles.marginTop6vw, { backgroundColor: '#F5EFE1', borderRadius: `${borderRadius}`, }]}
+                style={[styles.alignSelfCenter, styles.w60, styles.hAuto, styles.dFlex, styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.paddingV4vw, styles.marginTop6vw, { backgroundColor: '#F5EFE1', borderRadius: 16, }]}
             >
                 <Text style={[componentStyle.fsLight18LineHeight20]}>Xem thêm</Text>
             </TouchableOpacity>
@@ -250,9 +367,153 @@ export const FlatListBook2Col = (borderRadius) => {
     )
 }
 
+export const RenderBook = () => {
+    const { DATA } = RenderThings('books', ['title', 'author', 'image', 'distance', 'owner', 'quantity', 'category', 'bookmark']);
+    const [numberOfItemsToRender, setNumberOfItemsToRender] = useState(4);
+
+    const toggleBookmark = async (itemId) => {
+        try {
+            const bookRef = doc(firestore, 'books', itemId); // Assuming 'books' is your Firestore collection
+
+            // Get the current bookmark state from Firestore
+            const docSnapshot = await getDoc(bookRef);
+            const currentBookmarkState = docSnapshot.data().bookmark;
+
+            // Update the bookmark state by toggling it
+            await updateDoc(bookRef, {
+                bookmark: !currentBookmarkState,
+            });
+
+            // Update the local state (DATA) to reflect the change
+            setDATA((prevData) => {
+                return prevData.map((item) => {
+                    if (item.id === itemId) {
+                        return { ...item, bookmark: !currentBookmarkState };
+                    }
+                    return item;
+                });
+
+            });
+        } catch (error) {
+            console.error('Error toggling bookmark:', error);
+        }
+    };
+
+    return (
+        <View style={[styles.dFlex, styles.flexRow, styles.flexWrap, styles.w100vw, styles.justifyContentSpaceEvenly, styles.hAuto, styles.alignSelfCenter, { rowGap: vw(6) }]}>
+            {DATA.slice(0, numberOfItemsToRender).map((item) => {
+                return (
+                    <View
+
+                        key={item.id}
+
+                        style={[styles.w45vw, styles.dFlex, styles.flexCol, styles.justifyContentCenter, styles.gap2vw, styles.paddingV2vw, styles.positionRelative, { backgroundColor: '#F5EFE1', borderRadius: 8, }]}
+                    >
+                        <Image source={item.image} style={[styles.w40vw, styles.h40vw, styles.alignSelfCenter, { margin: '5%', borderRadius: 8 }]} />
+                        <View style={[styles.w90, styles.h20vw, styles.alignSelfCenter, styles.dFlex, styles.flexCol, styles.justifyContentSpaceBetween]}>
+                            <Text numberOfLines={2} ellipsizeMode='tail' style={[componentStyle.LibreBold18LineHeight20]}>{item.title}</Text>
+                            <View>
+                                <Text numberOfLines={1} ellipsizeMode='tail' style={[componentStyle.fsLight10LineHeight14, { color: '#858585', }]}>{item.category}</Text>
+                                <Text numberOfLines={1} ellipsizeMode='tail' style={[componentStyle.LibreNormal10LineHeight14,]}>Tác giả: {item.author}</Text>
+                                <Text numberOfLines={1} ellipsizeMode='tail' style={[componentStyle.LibreNormal10LineHeight14,]}>Số lượng: {item.quantity}</Text>
+                            </View>
+                        </View>
+                    </View>
+                )
+            })
+            }
+        </View>
+    )
+}
+
+
+/**
+ * dung o FeedScreen
+ * @returns Trả về màn hình danh sách các CLB
+ */
+export const RenderClubList = () => {
+    const { DATA } = RenderThings('club', ['title', 'image', 'subtitle', 'memberNumber']);
+    const [numberOfItemsToRender, setNumberOfItemsToRender] = useState(4);
+
+    return (
+        <View style={[styles.dFlex, styles.flexCol, styles.gap2vw, styles.w100]}>
+            {DATA.slice(0, numberOfItemsToRender).map((item) => {
+                return (
+                    <View key={item.id} style={[styles.w100, styles.padding4vw, { backgroundColor: '#F5EFE1', borderRadius: 16 }]}>
+                        <View style={[styles.dFlex, styles.flexRow, styles.gap4vw, styles.w100, styles.alignItemsCenter,]}>
+                            <Image source={item.image} style={[styles.w15vw, styles.h15vw, { borderRadius: 1000 }]} />
+                            <View style={[styles.dFlex, styles.flexCol, styles.justifyContentCenter, styles.flex1,]}>
+                                <Text style={[componentStyle.LibreBold20LineHeight122]}>{item.title}</Text>
+                                <Text style={[componentStyle.fsLight10LineHeight14, { color: '#816219' }]}>{item.subtitle}</Text>
+                            </View>
+                        </View>
+                        <View style={[styles.dFlex, styles.flexRow, styles.justifyContentSpaceBetween, styles.alignItemsCenter]}>
+                            {/* member avt */}
+                            <View style={{ width: vw(8), height: vw(8), borderRadius: 1000, backgroundColor: 'blue' }}></View>
+                            <View style={[styles.paddingV2vw, styles.paddingH4vw, { backgroundColor: 'black', borderRadius: 1000 }]}>
+                                <Text style={[componentStyle.fsBold16LineHeight24, { color: 'white' }]}>{item.memberNumber} thành viên</Text>
+                            </View>
+                        </View>
+                    </View>
+                )
+            })
+            }
+            <TouchableOpacity
+                onPress={() => { setNumberOfItemsToRender(DATA.length) }}
+                style={[styles.alignSelfCenter, styles.w60, styles.hAuto, styles.dFlex, styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.paddingV4vw, styles.marginTop6vw, { backgroundColor: colorStyle.color1, borderRadius: 16, }]}
+            >
+                <Text style={[componentStyle.fsSemiBold18LineHeight20, { color: colorStyle.color3, }]}>Xem thêm</Text>
+            </TouchableOpacity>
+        </View>
+    )
+}
+
+export const MostPeople = () => {
+
+    // soft data by the most of tradeCount
+    const { DATA: sortedData } = RenderThings('userList', ['name', 'avatar', 'bookOwnCount', 'bookGiveAwayCount', 'tradeCount']);
+    sortedData.sort((a, b) => {
+        return b.tradeCount - a.tradeCount;
+    }
+    );
+    return (
+
+        <View style={[styles.dFlex, styles.flexCol, styles.gap2vw, styles.w100]}>
+            {sortedData.slice(0, 1).map((item) => {
+                return (
+                    <View
+                        key={item.id}>
+                        {FirstRingSVG()}
+                        <Image source={item.avatar} style={[styles.w15vw, styles.h15vw, { borderRadius: 1000 }]} />
+                    </View>
+                )
+            })}
+            {sortedData.slice(1, 2).map((item) => {
+                return (
+                    <View
+                        key={item.id}>
+                        <Image source={item.avatar} style={[styles.w15vw, styles.h15vw, { borderRadius: 1000 }]} />
+                    </View>
+                )
+            })}
+            {sortedData.slice(2, 3).map((item) => {
+                return (
+                    <View
+                        key={item.id}>
+                        <Image source={item.avatar} style={[styles.w15vw, styles.h15vw, { borderRadius: 1000 }]} />
+                    </View>
+                )
+            })}
+        </View>
+    )
+
+}
+
 /**
  * 
- * @param {*} heading : Tiêu đề của thanh điều hướng
+ * @param {string} heading : Tiêu đề của thanh điều hướng
+ * @param {string} textColor : Màu chữ của thanh điều hướng
+ * @param {string} bgColor : Màu nền của thanh điều hướng
  * @returns : Trả về thanh điều hướng không có menu đi kèm
  */
 export const topNavBar = (heading, textColor, bgColor) => {
@@ -270,16 +531,26 @@ export const topNavBar = (heading, textColor, bgColor) => {
     )
 }
 
+/**
+ * 
+ * @param {string} heading : Tiêu đề của thanh điều hướng
+ * @param {string} textColor : Màu chữ của thanh điều hướng
+ * @param {string} bgColor : Màu nền của thanh điều hướng
+ * @param {string} envColor : Màu nền của môi trường
+ * @returns 
+ */
 export const avataTopNavBar = (heading, textColor, bgColor, envColor) => {
     const navigation = useNavigation();
     const [userName, setUserName] = useState(null);
+    const [userAvatar, setUserAvatar] = useState(null);
 
     useEffect(() => {
         fetchUserData().then((data) => {
             if (data) {
                 setUserName(data.name);
+                setUserAvatar(data.avatar)
             }
-        });
+        })
     }, []);
 
     return (
@@ -290,7 +561,7 @@ export const avataTopNavBar = (heading, textColor, bgColor, envColor) => {
             }]}>
                 <View style={[styles.dFlex, styles.flexNoWrap, styles.flexRow, styles.gap4vw, styles.alignContentCenter]}>
                     {/* import svg from file */}
-                    <Image source={require('../assets/images/avata.png')} style={[{ height: vw(15), width: vw(15) }]} />
+                    <Image source={{ uri: userAvatar }} style={[{ height: vw(15), width: vw(15), borderRadius: 1000 }]} />
                     <View style={[styles.dFlex, styles.flexCol, styles.justifyContentCenter]}>
                         <Text style={[componentStyle.LibreBold20LineHeight122, styles.paddingV1vw, { color: `${textColor}` }]}>Chào {userName}</Text>
                         <Text style={[componentStyle.fsLight16LineHeight16, styles.paddingV1vw, { color: `${textColor}` }]}>{heading}</Text>
@@ -332,6 +603,10 @@ export const submitBtnComponent = (title, bgColor, borderColor, textColor, onPre
     )
 }
 
+/**
+ * 
+ * @returns : Căn dưới để không bị menu dưới che phủ
+ */
 export const marginBottomForScrollView = () => {
     return (
         <View style={{ height: vh(5), opacity: 0 }}></View>
