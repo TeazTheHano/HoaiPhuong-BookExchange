@@ -149,6 +149,12 @@ const componentStyle = StyleSheet.create({
         lineHeight: 24,
     },
 
+    fsSemiBold18LineHeight20: {
+        fontFamily: 'fsSemiBold',
+        fontSize: 18,
+        lineHeight: 20,
+    },
+
     fsLight18LineHeight20: {
         fontFamily: 'fsLight',
         fontSize: 18,

@@ -74,6 +74,10 @@ const styles = StyleSheet.create({
         width: vw(20),
     },
 
+    w15vw: {
+        width: vw(15),
+    },
+
     w10: {
         width: '10%',
     },
@@ -209,6 +213,10 @@ const styles = StyleSheet.create({
 
     h20vw: {
         height: vw(20),
+    },
+
+    h15vw: {
+        height: vw(15),
     },
 
     h10: {

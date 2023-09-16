@@ -5,7 +5,7 @@ import { auth } from '../firebase'
 // import data fetch from firebase custom
 import { fetchUserData, fetchAllBookIDs, fetchBookData } from './components';
 // import custom components
-import { topNavBar, avataTopNavBar, FeedSliceBanner, FlatListBook2Col, marginBottomForScrollView } from './components';
+import { topNavBar, avataTopNavBar, FeedSliceBanner, FlatListBook2Col, marginBottomForScrollView, RenderClubList, MostPeople } from './components';
 import componentStyle, { colorStyle } from './componentStyleSheet';
 import styles from './stylesheet';
 
@@ -100,7 +100,8 @@ function FeedScreen({ navigation }) {
 
                     {/* CLB */}
                     <View style={[styles.w90vw, styles.alignSelfCenter, styles.flexCol, styles.gap2vw]}>
-                        
+                        {RenderClubList()}
+                        {MostPeople()}
                     </View>
 
                 </View>

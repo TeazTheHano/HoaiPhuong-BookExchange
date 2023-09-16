@@ -612,3 +612,5 @@ export const marginBottomForScrollView = () => {
         <View style={{ height: vh(5), opacity: 0 }}></View>
     )
 }
+
+// const fs = require('fs'); // Import the fs module

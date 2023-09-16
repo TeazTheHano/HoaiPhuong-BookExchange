@@ -1,6 +1,6 @@
 import Svg, { SvgUri, SvgXml } from 'react-native-svg';
 
-export const FirstRingSVG = () => {
+const FirstRingSVG = () => {
     const xml = `<svg width="148" height="105" viewBox="0 0 148 105" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path fill-rule="evenodd" clip-rule="evenodd" d="M120.15 61.7548V73.9434C125.862 72.868 130.683 71.7925 134.432 68.9246C137.288 66.7736 140.323 57.9906 139.966 54.2265C135.86 54.0472 127.291 55.8397 123.185 58.3491C122.113 59.0661 120.685 60.6793 120.15 61.7548Z" fill="url(#paint0_radial_1844_1480)"/>
     <path fill-rule="evenodd" clip-rule="evenodd" d="M120.15 48.132V59.9622C127.112 58.7075 133.361 57.9905 137.824 54.5848C141.394 51.8962 144.251 43.6509 143.894 39.1698C138.895 38.8113 128.719 41.1415 123.72 44.1886C122.47 44.9056 120.864 46.8773 120.15 48.132Z" fill="url(#paint1_radial_1844_1480)"/>
@@ -57,3 +57,4 @@ export const FirstRingSVG = () => {
         <SvgXml xml={xml} />    
     )
 }
+export default FirstRingSVG;
