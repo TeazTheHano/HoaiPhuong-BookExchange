@@ -22,11 +22,9 @@ import Checkbox from 'expo-checkbox';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { BlurView } from 'expo-blur';
 import { vw, vh, vmax, vmin } from 'react-native-expo-viewport-units';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import tempData from './appTemp';
 
-/**
- * REUSEABLE FUNCTION
- * @returns Trả về thông tin user
- */
 const fetchUserData = async () => {
     try {
         const user = auth.currentUser;
@@ -35,6 +33,12 @@ const fetchUserData = async () => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
+            console.log("Document data:", docSnap.data());
+
+            // Save data to AsyncStorage
+            await AsyncStorage.setItem('userData', JSON.stringify(docSnap.data()));
+            console.log('Data saved successfully.', 'userData', docSnap.data());
+
             return docSnap.data();
         }
     } catch (error) {
@@ -42,49 +46,8 @@ const fetchUserData = async () => {
     }
     return null;
 };
+fetchUserData();
 
-/**
- * REUSEABLE FUNCTION
- * @returns Trả về danh sách ID sách
- */
-const fetchAllBookIDs = async () => {
-    try {
-        const db = firestore;
-        const booksRef = collection(db, "books");
-        const querySnapshot = await getDocs(booksRef);
-
-        const bookIds = [];
-
-        querySnapshot.forEach((doc) => {
-            bookIds.push(doc.id);
-        });
-
-        return bookIds;
-    } catch (error) {
-        console.error("Error fetching book IDs:", error);
-        return [];
-    }
-};
-
-/**
- * REUSEABLE FUNCTION
- * @param {*} bookId 
- * @returns Trả về dữ liệu của một cuốn sách
- */
-const fetchBookData = async (bookId) => {
-    try {
-        const db = firestore;
-        const docRef = doc(db, "books", bookId);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            return docSnap.data();
-        }
-    } catch (error) {
-        console.error("Error fetching document:", error);
-    }
-    return null;
-};
 
 // Function to fetch document IDs by collection name
 /**
@@ -92,102 +55,127 @@ const fetchBookData = async (bookId) => {
  * @param {string} collectionName : Tên của collection trong Firestore
  * @returns trả về mảng ID của các document trong collection
  */
-const fetchDocumentIDs = async (collectionName) => {
+async function fetchAndSaveData(keyname, collectionName, objectProperties) {
     try {
         const db = firestore;
         const documentCollection = collection(db, collectionName);
         const querySnapshot = await getDocs(documentCollection);
 
-        const documentIDs = [];
+        const data = await Promise.all(querySnapshot.docs.map(async (doc) => {
+            const docData = doc.data();
+            const item = { id: doc.id };
 
-        querySnapshot.forEach((doc) => {
-            documentIDs.push(doc.id);
-        });
+            for (const prop of objectProperties) {
+                if (prop === 'image' || prop === 'avatar') {
+                    item[prop] = { uri: `${docData[prop]}` };
+                } else {
+                    item[prop] = docData[prop];
+                }
+            }
 
-        return documentIDs;
+            return item;
+        }));
+
+        // Save data to AsyncStorage
+        await AsyncStorage.setItem(keyname, JSON.stringify(data));
+        console.log('Data saved successfully.', keyname, data);
+
+        return data;
     } catch (error) {
-        console.error(`Error fetching ${collectionName} IDs:`, error);
-        return [];
+        console.error('Error fetching and saving data:', error);
     }
-};
+}
 
-// Function to fetch document data by ID
-/**
- * REUSEABLE FUNCTION
- * @param {string} collectionName : Tên của collection trong Firestore
- * @param {string} documentID : ID của document trong collection
- * @returns trả về object dữ liệu của document
- */
-const fetchDocumentData = async (collectionName, documentID) => {
+async function retrieveData(keyname) {
     try {
-        const db = firestore;
-        const documentRef = doc(db, collectionName, documentID);
-        const docSnap = await getDoc(documentRef);
-
-        if (docSnap.exists()) {
-            return docSnap.data();
+        const value = await AsyncStorage.getItem(keyname);
+        if (value !== null) {
+            console.log('Retrieved data:', value);
+            return value;
+        } else {
+            console.log('Data not found.');
         }
     } catch (error) {
-        console.error(`Error fetching ${collectionName} document (${documentID}):`, error);
+        console.error('Error retrieving data:', error);
     }
-    return null;
-};
+}
 
-/**
- * REUSEABLE FUNCTION
- * @param {string} documentName : Tên của collection trong Firestore
- * @param {Array} objectProperties : Các field cần lấy trong collection
- * @returns trả về mảng object dữ liệu của các document trong collection
- */
-const RenderThings = (documentName, objectProperties) => {
-    const [DATA, setDATA] = useState([]);
+async function deleteData(keyname) {
+    try {
+        await AsyncStorage.removeItem(keyname);
+        console.log('Data deleted successfully.');
+    } catch (error) {
+        console.error('Error deleting data:', error);
+    }
+}
+
+async function clearAllData() {
+    try {
+        await AsyncStorage.clear();
+        console.log('All data cleared successfully.');
+    } catch (error) {
+        console.error('Error clearing data:', error);
+    }
+}
+
+const FeedScreenFetch = () => {
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const documentIDs = await fetchDocumentIDs(documentName);
-                const docList = {};
+        async function fetchBooks() {
+            const keyname = 'books';
+            const collectionName = 'books';
+            const objectProperties = ['author', 'bookmark', 'image', 'owner'];
 
-                await Promise.all(documentIDs.map(async (documentID) => {
-                    const docData = await fetchDocumentData(documentName, documentID);
-                    docList[documentID] = docData;
-                }));
+            const data = await fetchAndSaveData(keyname, collectionName, objectProperties);
 
-                const data = Object.keys(docList).map((docID) => {
-                    const item = {
-                        id: docID,
-                    };
+            // Use the retrieved data if needed
+            console.log('Retrieved data:', data);
+        }
+        fetchBooks();
 
-                    for (const prop of objectProperties) {
-                        if (prop === 'image' || prop === 'avatar') {
-                            item[prop] = { uri: `${docList[docID][prop]}` };
-                        } else {
-                            item[prop] = docList[docID][prop];
-                        }
-                    }
+        async function fetchClubs() {
+            const keyname = 'clubs';
+            const collectionName = 'club';
+            const objectProperties = ['image', 'memberNumber', 'subtitle', 'title'];
 
-                    return item;
-                });
+            const data = await fetchAndSaveData(keyname, collectionName, objectProperties);
 
-                setDATA(data);
-            } catch (error) {
-                console.error(`Error fetching ${documentName} data:`, error);
-            }
-        };
-        fetchData();
-    }, [documentName, objectProperties]);
+            // Use the retrieved data if needed
+            console.log('Retrieved data:', data);
+        }
+        fetchClubs();
 
-    // Add your toggleBookmark or other functions here if needed
+        async function fetchUserList() {
+            const keyname = 'userList';
+            const collectionName = 'userList';
+            const objectProperties = ['avatar', 'bookGiveAwayCount', 'bookOwnCount', 'name', 'tradeCount'];
 
-    return {
-        DATA,
-    };
-};
+            const data = await fetchAndSaveData(keyname, collectionName, objectProperties);
 
-/**
- * dùng ở FeedScreen
- * @param {*} borderRadius 
- * @returns Trả về màn hình slide sách
- */
+            // Use the retrieved data if needed
+            console.log('Retrieved data:', data);
+        }
+        fetchUserList();
+    }, [])
+}
+
+export default FeedScreenFetch;
+
+export const test2 = () => {
+    useEffect(() => {
+        retrieveData('books');
+        retrieveData('clubs');
+    }, [])
+    return (
+        <View>
+            <Text>test2</Text>
+        </View>
+    )
+}
+
+
+// _____________ //
+
 export const FeedSliceBanner = (borderRadius) => {
     const [DATA, setDATA] = useState([]);
 
@@ -545,12 +533,12 @@ export const avataTopNavBar = (heading, textColor, bgColor, envColor) => {
     const [userAvatar, setUserAvatar] = useState(null);
 
     useEffect(() => {
-        fetchUserData().then((data) => {
-            if (data) {
-                setUserName(data.name);
-                setUserAvatar(data.avatar)
-            }
-        })
+        retrieveData('userData').then((userData) => {
+            const parsedUserData = JSON.parse(userData);
+            setUserName(parsedUserData.name);
+            setUserAvatar(parsedUserData.avatar);
+        }
+        );
     }, []);
 
     return (
@@ -612,5 +600,3 @@ export const marginBottomForScrollView = () => {
         <View style={{ height: vh(5), opacity: 0 }}></View>
     )
 }
-
-// _____________________________________________________________________________________________________________ // 
