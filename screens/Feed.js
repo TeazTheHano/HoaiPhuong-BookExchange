@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Button, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, FlatList, RefreshControl, Image } from 'react-native';
 import { auth } from '../firebase'
 
 // import data fetch from firebase custom
 import { fetchUserData, fetchAllBookIDs, fetchBookData } from './components';
 // import custom components
-import { topNavBar, avataTopNavBar, FeedSliceBanner, FlatListBook2Col, marginBottomForScrollView, RenderClubList, MostPeople, testReadingTempData } from './components';
-import  testHehe , {test2}  from './component2';
+import FeedScreenFetch, { topNavBar, avataTopNavBar, FeedSliceBanner, FlatListBook2Col, marginBottomForScrollView, RenderClubList, MostPeople, testReadingTempData } from './components';
 import componentStyle, { colorStyle } from './componentStyleSheet';
 import styles from './stylesheet';
 
@@ -72,6 +71,8 @@ function FeedScreen({ navigation }) {
         }, 2000);
     }, []);
 
+    FeedScreenFetch()
+
     return (
         <SafeAreaView style={[styles.container, styles.flex1, { backgroundColor: 'black' }]}>
             <StatusBar barStyle="light-content" backgroundColor='black' />
@@ -102,9 +103,7 @@ function FeedScreen({ navigation }) {
                     {/* CLB */}
                     <View style={[styles.w90vw, styles.alignSelfCenter, styles.flexCol, styles.gap2vw]}>
                         {RenderClubList()}
-                        {/* {MostPeople()} */}
-                        {testHehe()}
-                        {test2()}
+                        {MostPeople()}
                     </View>
 
 
