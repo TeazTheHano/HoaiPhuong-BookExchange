@@ -5,7 +5,7 @@ import { auth } from '../firebase'
 // import data fetch from firebase custom
 import { fetchUserData, fetchAllBookIDs, fetchBookData } from './components';
 // import custom components
-import FeedScreenFetch, { topNavBar, avataTopNavBar, FeedSliceBanner, FlatListBook2Col, marginBottomForScrollView, RenderClubList, MostPeople, testReadingTempData } from './components';
+import {FeedScreenFetch, topNavBar, avataTopNavBar, FeedSliceBanner, FlatListBook2Col, marginBottomForScrollView, RenderClubList, MostPeople, testReadingTempData } from './components';
 import componentStyle, { colorStyle } from './componentStyleSheet';
 import styles from './stylesheet';
 
@@ -48,7 +48,7 @@ function categoryFlatList() {
 
     const Item = ({ title, image }) => (
         <TouchableOpacity style={[styles.marginLeft5vw]}>
-            <Image source={{ uri: image }} style={[styles.w20vw, styles.h20vw, { borderRadius: '50%' }]} />
+            <Image source={{ uri: image }} style={[styles.w20vw, styles.h20vw, { borderRadius: 1000 }]} />
             <Text numberOfLines={2} ellipsizeMode='clip' style={[styles.textCenter, styles.w20vw, { fontFamily: `fsLight`, fontSize: 12 }]}>{title}</Text>
         </TouchableOpacity>
     );
@@ -59,6 +59,8 @@ function categoryFlatList() {
             renderItem={({ item }) => <Item title={item.title} image={item.image} />}
             keyExtractor={item => item.id}
             horizontal={true}
+            // hide scroll bar
+            showsHorizontalScrollIndicator={false}
         />)
 }
 
@@ -78,6 +80,8 @@ function FeedScreen({ navigation }) {
             <StatusBar barStyle="light-content" backgroundColor='black' />
             {avataTopNavBar('Home', colorStyle.color3, 'black', colorStyle.color3)}
             <ScrollView style={[styles.paddingTop4vw, { backgroundColor: colorStyle.color3, }]}
+                // hide scroll bar
+                showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }>
@@ -85,13 +89,13 @@ function FeedScreen({ navigation }) {
                     <Text style={[componentStyle.LibreBold24LineHeight140, styles.textCenter]}>Gợi ý cuốn sách gần bạn</Text>
                     {/* slide card */}
                     <View style={[{ backgroundColor: 'gray', borderRadius: 16 }, styles.w90vw, styles.h90vw, styles.alignSelfCenter,]}>
-                        {FeedSliceBanner(16)}
+                        {FeedSliceBanner()}
                     </View>
 
                     {/* Most rented book */}
                     <View style={[styles.w90vw, styles.alignSelfCenter, styles.flexCol, styles.gap2vw]}>
                         <Text style={[componentStyle.LibreBold24LineHeight140]}>Sách được mượn nhiều nhất</Text>
-                        {FlatListBook2Col(16)}
+                        {FlatListBook2Col()}
                     </View>
 
                     {/* Cataloge */}
@@ -103,12 +107,11 @@ function FeedScreen({ navigation }) {
                     {/* CLB */}
                     <View style={[styles.w90vw, styles.alignSelfCenter, styles.flexCol, styles.gap2vw]}>
                         {RenderClubList()}
-                        {MostPeople()}
                     </View>
+                        {MostPeople()}
 
 
                 </View>
-                {marginBottomForScrollView()}
             </ScrollView>
 
 

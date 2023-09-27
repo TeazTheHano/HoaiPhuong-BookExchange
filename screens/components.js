@@ -15,7 +15,7 @@ import componentStyle, { useCustomFonts, colorStyle } from './componentStyleShee
 
 // Import local Icon
 import Svg, { SvgUri, SvgXml } from 'react-native-svg';
-import FirstRingSVG from '../assets/svg/1stRingSVG';
+import FirstRingSVG, { top1MostPeople, top2MostPeople, top3MostPeople } from '../assets/svg/1stRingSVG';
 
 // Import API
 import Checkbox from 'expo-checkbox';
@@ -25,6 +25,10 @@ import { vw, vh, vmax, vmin } from 'react-native-expo-viewport-units';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import tempData from './appTemp';
 
+/**
+ * 
+ * @returns Trả về thông tin User hiện tại
+ */
 const fetchUserData = async () => {
     try {
         const user = auth.currentUser;
@@ -54,11 +58,8 @@ const fetchUserData = async () => {
     }
     return null;
 };
-
 // Call the function when you want to fetch user data
 fetchUserData();
-
-
 
 /**
  * Trả về một mảng các object chứa dữ liệu của các đối tượng thuộc Collection yêu cầu
@@ -102,6 +103,11 @@ async function fetchAndSaveData(keyname, collectionName, objectProperties) {
     }
 }
 
+/**
+ * Phục vụ cho hàm fetchAndSaveData() kiểm tra xem chuỗi JSON có hợp lệ hay không
+ * @param {*} jsonString 
+ * @returns 
+ */
 function isValidJson(jsonString) {
     try {
         JSON.parse(jsonString);
@@ -170,9 +176,10 @@ async function clearAllData() {
 }
 
 /**
- * fetch dữ liệu cho màn hình FeedScreen
+ * fetch dữ liệu cho màn hình FeedScreen.
+ * Hàm tiêu chuẩn cho mọi màn hình để lấy dữ liệu từ Firestore và lưu vào AsyncStorage
  */
-const FeedScreenFetch = () => {
+export const FeedScreenFetch = () => {
     // Define fetchRequests within the component's scope
     const fetchRequests = [
         {
@@ -204,7 +211,6 @@ const FeedScreenFetch = () => {
         fetchData();
     }, []);
 }
-export default FeedScreenFetch;
 
 export const test2 = () => {
     useEffect(() => {
@@ -218,10 +224,13 @@ export const test2 = () => {
     )
 }
 
+// ___________________________________________________________________________________________________________________________________________ //
 
-// _____________ //
-
-export const FeedSliceBanner = (borderRadius) => {
+/**
+ * 
+ * @returns 
+ */
+export const FeedSliceBanner = () => {
     const [DATA, setDATA] = useState([]);
 
     useEffect(() => {
@@ -236,8 +245,8 @@ export const FeedSliceBanner = (borderRadius) => {
         fetchData();
     }, []);
 
-    const Item = ({ title, author, image, distance, owner }) => (
-        <View style={[styles.positionRelative, styles.w90vw, styles.h100, { backgroundColor: 'black', borderRadius: 16 }]}
+    const Item = ({ id, title, author, image, distance, owner }) => (
+        <View key={id} style={[styles.positionRelative, styles.w90vw, styles.h100, { backgroundColor: 'black', borderRadius: 16 }]}
         >
             <ImageBackground
                 source={image} style={[styles.flex1]}>
@@ -268,20 +277,19 @@ export const FeedSliceBanner = (borderRadius) => {
         <FlatList
             data={DATA}
             horizontal={true}
-            renderItem={({ item }) => <Item title={item.title} author={item.author} image={item.image} distance={item.distance} owner={item.owner} />}
+            renderItem={({ item }) => <Item title={item.title} author={item.author} image={item.image} distance={item.distance} owner={item.owner} id={item.id} />}
             keyExtractor={item => item.id}
             style={[styles.w100, styles.h100,]}
-            borderRadius={borderRadius}
+            borderRadius={16}
         />
     )
 }
 
 /**
  * dùng ở FeedScreen
- * @param {*} borderRadius 
  * @returns Trả về một danh sách các cuốn sách được hiển thị dưới dạng lưới 2 cột
  */
-export const FlatListBook2Col = (borderRadius) => {
+export const FlatListBook2Col = () => {
     const [numberOfItemsToRender, setNumberOfItemsToRender] = useState(4);
     const [DATA, setDATA] = useState([]);
     const [bookmark, setBookmark] = useState(false);
@@ -358,7 +366,7 @@ export const FlatListBook2Col = (borderRadius) => {
             </View>
 
             <TouchableOpacity
-                onPress={() => { setNumberOfItemsToRender(DATA.length) }}
+                onPress={() => { setNumberOfItemsToRender(numberOfItemsToRender+10) }}
                 style={[styles.alignSelfCenter, styles.w60, styles.hAuto, styles.dFlex, styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.paddingV4vw, styles.marginTop6vw, { backgroundColor: '#F5EFE1', borderRadius: 16, }]}
             >
                 <Text style={[componentStyle.fsLight18LineHeight20]}>Xem thêm</Text>
@@ -487,7 +495,7 @@ export const RenderClubList = () => {
             })
             }
             <TouchableOpacity
-                onPress={() => { setNumberOfItemsToRender(DATA.length) }}
+                onPress={() => { setNumberOfItemsToRender(numberOfItemsToRender+10) }}
                 style={[styles.alignSelfCenter, styles.w60, styles.hAuto, styles.dFlex, styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.paddingV4vw, styles.marginTop6vw, { backgroundColor: colorStyle.color1, borderRadius: 16, }]}
             >
                 <Text style={[componentStyle.fsSemiBold18LineHeight20, { color: colorStyle.color3, }]}>Xem thêm</Text>
@@ -497,10 +505,6 @@ export const RenderClubList = () => {
 }
 
 export const MostPeople = () => {
-
-    // soft data by the most of tradeCount
-    // const { DATA: sortedData } = RenderThings('userList', ['name', 'avatar', 'bookOwnCount', 'bookGiveAwayCount', 'tradeCount']);
-
     const [DATA, setDATA] = useState([]);
 
     useEffect(() => {
@@ -520,37 +524,110 @@ export const MostPeople = () => {
     });
 
     return (
+        <View style={[styles.dFlex, styles.flexCol, styles.gap2vw, styles.justifyContentCenter, {backgroundColor: colorStyle.colorSecondary3, paddingTop: vw(8), paddingHorizontal: vw(4), paddingBottom: vw(6), borderTopLeftRadius: vw(12), borderTopRightRadius: vw(12)}]}>
+            <Text style={[componentStyle.LibreBold24LineHeight140, styles.textCenter, { color: 'white' }]}>“Bạn sách” thân thiết</Text>
+            <Text style={{ fontFamily: 'fsLight', fontSize: 12, lineHeight: 16, textAlign: 'center', color: 'white' }}>Top “Bạn sách” tích cực hoạt động và sở hữu lượng sách cùng chia sẻ với cộng đồng uy tín và lớn nhất</Text>
+            <View style={[styles.dFlex, styles.flexRow, styles.gap2vw, styles.w100, styles.justifyContentSpaceBetween, styles.alignItemsCenter, styles.alignSelfCenter, ]}>
+                {sortedData.slice(1, 2).map((item) => {
+                    return (
+                        <View
+                            key={item.id} style={[styles.positionRelative, { width: '25%', height: '60%', marginTop: vw(6)}]}>
+                            <View style={[styles.w100, styles.h100, styles.positionAbsolute, { top: '-16%', zIndex: -1 }]}>{top2MostPeople()}</View>
+                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, { fontFamily: 'LibreBodoni_700Bold', color: '#243D5F', fontSize: 12, marginTop: vw(1) }]} numberOfLines={1}>{item.name}</Text>
+                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, { fontFamily: 'fsLight', color: colorStyle.colorNeutral1, fontSize: 6, letterSpacing: 2.4 }]}>TOP 2</Text>
+                            <Image source={item.avatar} style={[styles.alignSelfCenter, { borderRadius: 1000, width: vw(12), height: vw(12)}]} />
+                            <View style={[styles.dFlex, styles.w100, styles.flexRow, styles.justifyContentSpaceEvenly, styles.marginTop4vw]}>
+                                <View>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Sở hữu</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.LibreNormal14LineHeight16]}>{item.bookOwnCount}</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Đầu sách</Text>
+                                </View>
+                                <View>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Đã trao đổi</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.LibreNormal14LineHeight16]}>{item.tradeCount}</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Lượt</Text>
+                                </View>
+                                <View>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Đã tặng</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.LibreNormal14LineHeight16]}>{item.bookGiveAwayCount}</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Đầu sách</Text>
+                                </View>
+                            </View>
+                        </View>
+                    )
+                })}
 
-        <View style={[styles.dFlex, styles.flexCol, styles.gap2vw, styles.w100]}>
-            {sortedData.slice(0, 1).map((item) => {
-                return (
-                    <View
-                        key={item.id}>
-                        {FirstRingSVG()}
-                        <Image source={item.avatar} style={[styles.w15vw, styles.h15vw, { borderRadius: 1000 }]} />
-                    </View>
-                )
-            })}
-            {sortedData.slice(1, 2).map((item) => {
-                return (
-                    <View
-                        key={item.id}>
-                        <Image source={item.avatar} style={[styles.w15vw, styles.h15vw, { borderRadius: 1000 }]} />
-                    </View>
-                )
-            })}
-            {sortedData.slice(2, 3).map((item) => {
-                return (
-                    <View
-                        key={item.id}>
-                        <Image source={item.avatar} style={[styles.w15vw, styles.h15vw, { borderRadius: 1000 }]} />
-                    </View>
-                )
-            })}
+                {sortedData.slice(0, 1).map((item) => {
+                    return (
+                        <View key={item.id} style={[styles.positionRelative, { height: vw(55.5), width: vw(40) }]}>
+                            <View style={[styles.positionAbsolute, { width: '100%', height: vw(40), top: vw(12.5), zIndex: -1 }]}>
+                                {top1MostPeople()}
+                            </View>
+                            <View style={[styles.positionAbsolute, styles.dFlex, styles.flexCol, styles.gap2vw, styles.w100]}>
+                                <View
+                                    key={item.id} style={[styles.positionRelative, styles.alignSelfCenter, { height: vw(25), width: '100%' }]}>
+                                    {FirstRingSVG()}
+                                    <Image source={item.avatar} style={[styles.positionAbsolute, styles.alignSelfCenter, { borderRadius: 1000, width: vw(19), height: vw(19), zIndex: -1, transform: [{ translate: [0, vw(3)] }], }]} />
+                                </View>
+                                <Text style={[styles.textCenter, componentStyle.LibreBold18LineHeight20, styles.w100, styles.overflowHiddenEllipsis, { color: '#FFDB68', paddingHorizontal: vw(1) }]} numberOfLines={1}>{item.name}</Text>
+                                <View style={[styles.dFlex, styles.w100, styles.flexRow, styles.justifyContentSpaceEvenly,]}>
+                                    <View>
+                                        <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight8LineHeight10]}>Sở hữu</Text>
+                                        <Text style={[styles.textCenter, { color: 'white' }, componentStyle.LibreBold24LineHeight140]}>{item.bookOwnCount}</Text>
+                                        <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight8LineHeight10]}>Đầu sách</Text>
+                                    </View>
+                                    <View>
+                                        <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight8LineHeight10]}>Đã trao đổi</Text>
+                                        <Text style={[styles.textCenter, { color: 'white' }, componentStyle.LibreBold24LineHeight140]}>{item.tradeCount}</Text>
+                                        <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight8LineHeight10]}>Lượt</Text>
+                                    </View>
+                                    <View>
+                                        <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight8LineHeight10]}>Đã tặng</Text>
+                                        <Text style={[styles.textCenter, { color: 'white' }, componentStyle.LibreBold24LineHeight140]}>{item.bookGiveAwayCount}</Text>
+                                        <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight8LineHeight10]}>Đầu sách</Text>
+                                    </View>
+                                </View>
+                            </View>
+
+                        </View>
+                    )
+                })}
+
+                {sortedData.slice(2, 3).map((item) => {
+                    return (
+                        <View
+                            key={item.id} style={[styles.positionRelative, { width: '25%', height: '60%', marginTop: vw(6)}]}>
+                            <View style={[styles.w100, styles.h100, styles.positionAbsolute, { top: '-16%', zIndex: -1 }]}>{top3MostPeople()}</View>
+                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, { fontFamily: 'LibreBodoni_700Bold', color: '#243D5F', fontSize: 12, marginTop: vw(1) }]} numberOfLines={1}>{item.name}</Text>
+                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, { fontFamily: 'fsLight', color: colorStyle.colorNeutral1, fontSize: 6, letterSpacing: 2.4 }]}>TOP 2</Text>
+                            <Image source={item.avatar} style={[styles.alignSelfCenter, { borderRadius: 1000, width: vw(12), height: vw(12)}]} />
+                            <View style={[styles.dFlex, styles.w100, styles.flexRow, styles.justifyContentSpaceEvenly, styles.marginTop4vw]}>
+                                <View>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Sở hữu</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.LibreNormal14LineHeight16]}>{item.bookOwnCount}</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Đầu sách</Text>
+                                </View>
+                                <View>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Đã trao đổi</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.LibreNormal14LineHeight16]}>{item.tradeCount}</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Lượt</Text>
+                                </View>
+                                <View>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Đã tặng</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.LibreNormal14LineHeight16]}>{item.bookGiveAwayCount}</Text>
+                                    <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Đầu sách</Text>
+                                </View>
+                            </View>
+                        </View>
+                    )
+                })}
+            </View>
         </View>
     )
 
 }
+
+// ______________________________________________________________________________________________________ //
 
 /**
  * 

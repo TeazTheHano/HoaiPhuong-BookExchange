@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { vw, vh } from 'react-native-expo-viewport-units';
 
+import { Dimensions } from 'react-native';
+
 const styles = StyleSheet.create({
     boxsizingBorderBox: {
         boxSizing: 'border-box',
@@ -64,6 +66,14 @@ const styles = StyleSheet.create({
 
     w40vw: {
         width: vw(40),
+    },
+
+    w30: {
+        width: '30%',
+    },
+
+    w25: {
+        width: '25%',
     },
 
     w20: {
@@ -532,6 +542,11 @@ const styles = StyleSheet.create({
         display: 'flex',
     },
 
+    dGrid3ColAuto: {
+        display: 'grid',
+        gridTemplateColumns: 'auto auto auto',
+    },
+
     dNone: {
         display: 'none',
     },
@@ -607,7 +622,7 @@ const styles = StyleSheet.create({
     gap5vw: {
         gap: vw(5),
     },
-    
+
     gap4vw: {
         gap: vw(4),
     },
@@ -631,7 +646,7 @@ const styles = StyleSheet.create({
     gap1vh: {
         gap: vh(1),
     },
-    
+
     justifyContentCenter: {
         justifyContent: 'center',
     },
@@ -685,7 +700,7 @@ const styles = StyleSheet.create({
     },
 
     alignSelfEnd: {
-        alignSelf: 'flex-end', 
+        alignSelf: 'flex-end',
     },
 
     alignSelfStretch: {
@@ -747,7 +762,7 @@ const styles = StyleSheet.create({
     top4vw: {
         top: vw(4),
     },
-    
+
     top1vw: {
         top: vw(1),
     },
@@ -768,11 +783,25 @@ const styles = StyleSheet.create({
         right: vw(4),
     },
 
+    centerX: {
+        left: '50%',
+        transform: [{ translate: ['-50%', 0] }],
+    },
+    centerY: {
+        top: '50%',
+        transform: [{ translate: [0, '-50%'] }],
+    },
+    centerXY: {
+        top: '50%',
+        left: '50%',
+        transform: [{ translate: ['-50%', '-50%'] }],
+    },
+
     right1vw: {
         right: vw(1),
     },
 
-    textCenter: {   
+    textCenter: {
         textAlign: 'center',
     },
 
@@ -790,6 +819,47 @@ const styles = StyleSheet.create({
 
     lineHeight20: {
         lineHeight: 20,
+    },
+
+    overflowHidden: {
+        overflow: 'hidden',
+    },
+
+    overflowHiddenEllipsis: {
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+    },
+
+    overflowVisible: {
+        overflow: 'visible',
+    },
+
+    overflowScroll: {
+        overflow: 'scroll',
+    },
+
+    overflowXHidden: {
+        overflowX: 'hidden',
+    },
+
+    overflowXVisible: {
+        overflowX: 'visible',
+    },
+
+    overflowXScroll: {
+        overflowX: 'scroll',
+    },
+
+    overflowYHidden: {
+        overflowY: 'hidden',
+    },
+
+    overflowYVisible: {
+        overflowY: 'visible',
+    },
+
+    overflowYScroll: {
+        overflowY: 'scroll',
     },
 
 });

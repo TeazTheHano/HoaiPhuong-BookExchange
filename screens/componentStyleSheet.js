@@ -107,6 +107,12 @@ const componentStyle = StyleSheet.create({
         lineHeight: 33,
     },
 
+    LibreBold24LineHeight24: {
+        fontFamily: 'LibreBodoni_700Bold',
+        fontSize: 24,
+        lineHeight: 24,
+    },
+
     LibreBold20LineHeight122: {
         fontFamily: 'LibreBodoni_700Bold',
         fontSize: 20,
@@ -183,6 +189,18 @@ const componentStyle = StyleSheet.create({
         fontFamily: 'fsLight',
         fontSize: 10,
         lineHeight: 14,
+    },
+
+    fsLight8LineHeight10: {
+        fontFamily: 'fsLight',
+        fontSize: 8,
+        lineHeight: 10,
+    },
+
+    fsLight4LineHeight6: {
+        fontFamily: 'fsLight',
+        fontSize: 4,
+        lineHeight: 6,
     },
 
     // login/register screen
