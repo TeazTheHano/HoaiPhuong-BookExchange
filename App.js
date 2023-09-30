@@ -13,6 +13,10 @@ import LoadScreen from './screens/LoadScreen';
 import LogReg from './screens/LogReg';
 import VerifyScreen from './screens/VerifyScreen';
 import CCCDpicture from './screens/CCCDpicture';
+import BookCategoryScreen from './screens/BookCategoryScreen';
+import BookCategoryDetailScreen from './screens/BookCategoryDetailScreen';
+import ClubScreen from './screens/ClubScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -27,6 +31,10 @@ export default function App() {
         <Stack.Screen name="Load" component={LoadScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="BookCategory" component={BookCategoryScreen} />
+        <Stack.Screen name="Club" component={ClubScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="BookCategoryDetail" component={BookCategoryDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

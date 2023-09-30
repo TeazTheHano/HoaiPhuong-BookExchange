@@ -247,7 +247,7 @@ function LogReg() {
             />
             <View style={[styles.flex1, styles.justifyContentCenter]}>
                 <Text style={[componentStyle.h1, styles.textCenter]}>App Name</Text>
-                <Text style={[styles.textCenter, styles.lineHeight20, { fontFamily: 'fsThin', fontSize: 16 }]}>Quote for app</Text>
+                <Text style={[styles.textCenter, styles.lineHeight20, styles.fontSize4vw, { fontFamily: 'fsThin', }]}>Quote for app</Text>
             </View>
 
             {renderScreen()}

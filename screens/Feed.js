@@ -1,68 +1,17 @@
 import React, { useEffect } from 'react';
 import { View, Text, Button, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, FlatList, RefreshControl, Image } from 'react-native';
 import { auth } from '../firebase'
+import { vw, vh, vmax, vmin } from 'react-native-expo-viewport-units';
 
 // import data fetch from firebase custom
 import { fetchUserData, fetchAllBookIDs, fetchBookData } from './components';
 // import custom components
-import {FeedScreenFetch, topNavBar, avataTopNavBar, FeedSliceBanner, FlatListBook2Col, marginBottomForScrollView, RenderClubList, MostPeople, testReadingTempData } from './components';
+import {FeedScreenFetch, topNavBar, avataTopNavBar, FeedSliceBanner, FlatListBook2Col, marginBottomForScrollView, RenderClubList, MostPeople, testReadingTempData, categoryFlatList } from './components';
 import componentStyle, { colorStyle } from './componentStyleSheet';
 import styles from './stylesheet';
 
 import DetailsScreen from './DetailScreen';
 import LoadScreen from './LoadScreen';
-
-function categoryFlatList() {
-    const DATA = [
-        {
-            id: '1',
-            title: 'Sách adfsasdf giáo khoa',
-            image: 'https://picsum.photos/200/300',
-        },
-        {
-            id: '2',
-            title: 'Sáchas fasf as giáo khoa',
-            image: 'https://picsum.photos/200/300',
-        },
-        {
-            id: '3',
-            title: 'Sáchasdf as  giáo khoa',
-            image: 'https://picsum.photos/200/300',
-        },
-        {
-            id: '4',
-            title: 'Sáchasdf as  giáo khoa',
-            image: 'https://picsum.photos/200/300',
-        },
-        {
-            id: '5',
-            title: 'Sáchasdf as  giáo khoa',
-            image: 'https://picsum.photos/200/300',
-        },
-        {
-            id: '6',
-            title: 'Sáchasdf as  giáo khoa',
-            image: 'https://picsum.photos/200/300',
-        }
-    ]
-
-    const Item = ({ title, image }) => (
-        <TouchableOpacity style={[styles.marginLeft5vw]}>
-            <Image source={{ uri: image }} style={[styles.w20vw, styles.h20vw, { borderRadius: 1000 }]} />
-            <Text numberOfLines={2} ellipsizeMode='clip' style={[styles.textCenter, styles.w20vw, { fontFamily: `fsLight`, fontSize: 12 }]}>{title}</Text>
-        </TouchableOpacity>
-    );
-
-    return (
-        <FlatList
-            data={DATA}
-            renderItem={({ item }) => <Item title={item.title} image={item.image} />}
-            keyExtractor={item => item.id}
-            horizontal={true}
-            // hide scroll bar
-            showsHorizontalScrollIndicator={false}
-        />)
-}
 
 function FeedScreen({ navigation }) {
     const [refreshing, setRefreshing] = React.useState(false);
@@ -79,7 +28,7 @@ function FeedScreen({ navigation }) {
         <SafeAreaView style={[styles.container, styles.flex1, { backgroundColor: 'black' }]}>
             <StatusBar barStyle="light-content" backgroundColor='black' />
             {avataTopNavBar('Home', colorStyle.color3, 'black', colorStyle.color3)}
-            <ScrollView style={[styles.paddingTop4vw, { backgroundColor: colorStyle.color3, }]}
+            <ScrollView style={[styles.paddingTop4vw, { backgroundColor: colorStyle.color3,}]}
                 // hide scroll bar
                 showsVerticalScrollIndicator={false}
                 refreshControl={
@@ -88,7 +37,7 @@ function FeedScreen({ navigation }) {
                 <View style={[styles.dFlex, styles.flexCol, styles.gap2vw]}>
                     <Text style={[componentStyle.LibreBold24LineHeight140, styles.textCenter]}>Gợi ý cuốn sách gần bạn</Text>
                     {/* slide card */}
-                    <View style={[{ backgroundColor: 'gray', borderRadius: 16 }, styles.w90vw, styles.h90vw, styles.alignSelfCenter,]}>
+                    <View style={[{ backgroundColor: 'gray', borderRadius: vw(4) }, styles.w90vw, styles.h90vw, styles.alignSelfCenter,]}>
                         {FeedSliceBanner()}
                     </View>
 

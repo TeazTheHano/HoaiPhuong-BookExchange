@@ -61,6 +61,49 @@ const fetchUserData = async () => {
 // Call the function when you want to fetch user data
 fetchUserData();
 
+export const queryCollectionBInsideCollectionA = async (collectionAName, documentAID, collectionBName, objectProperties) => {
+    try {
+        const db = firestore;
+        const docRef = doc(db, collectionAName, documentAID);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const collectionB = data[collectionBName];
+            const querySnapshot = await getDocs(collectionB);
+
+            const collectionBdata = await Promise.all(querySnapshot.docs.map(async (doc) => {
+                const docData = doc.data();
+                const item = { id: doc.id };
+
+                for (const prop of objectProperties) {
+                    if (prop === 'image' || prop === 'avatar') {
+                        if (docData[prop] === null || docData[prop] === undefined || docData[prop] === '') {
+                            item[prop] = require('../assets/images/placeholder.jpg');
+                        } else {
+                            item[prop] = { uri: `${docData[prop]}` };
+                        }
+                    } else {
+                        item[prop] = docData[prop];
+                    }
+                }
+
+                return item;
+            }));
+
+            return collectionBdata; // Return the data from Collection B
+        } else {
+            console.log("No such document!");
+            return null; // Return null if the document doesn't exist
+        }
+    } catch (error) {
+        console.error('Error fetching Collection A.1 data:', error);
+        return null;
+    }
+}
+
+
+
 /**
  * Trả về một mảng các object chứa dữ liệu của các đối tượng thuộc Collection yêu cầu
  * @param {string} keyname : tên key của AsyncStorage
@@ -68,7 +111,7 @@ fetchUserData();
  * @param {string} objectProperties : mảng các thuộc tính của đối tượng
  * @returns : mảng các object chứa dữ liệu của các đối tượng thuộc Collection yêu cầu
  */
-async function fetchAndSaveData(keyname, collectionName, objectProperties) {
+export const fetchAndSaveData = async (keyname, collectionName, objectProperties) => {
     try {
         const db = firestore;
         const documentCollection = collection(db, collectionName);
@@ -80,7 +123,11 @@ async function fetchAndSaveData(keyname, collectionName, objectProperties) {
 
             for (const prop of objectProperties) {
                 if (prop === 'image' || prop === 'avatar') {
-                    item[prop] = { uri: `${docData[prop]}` };
+                    if (docData[prop] === null || docData[prop] === undefined || docData[prop] === '') {
+                        item[prop] = require('../assets/images/placeholder.jpg');
+                    } else {
+                        item[prop] = { uri: `${docData[prop]}` };
+                    }
                 } else {
                     item[prop] = docData[prop];
                 }
@@ -117,12 +164,20 @@ function isValidJson(jsonString) {
     }
 }
 
+export const completeURIforImage = (imageURI) => {
+    if (imageURI === null || imageURI === undefined || imageURI === '') {
+        return require('../assets/images/placeholder.jpg');
+    } else {
+        return { uri: `${imageURI}` };
+    }
+}
+
 /**
  * 
  * @param {string} keyname : tên key của AsyncStorage
  * @returns : lấy dữ liệu từ AsyncStorage
  */
-async function retrieveData(keyname) {
+export const retrieveData = async (keyname) => {
     try {
         const value = await AsyncStorage.getItem(keyname);
         if (value !== null) {
@@ -197,6 +252,11 @@ export const FeedScreenFetch = () => {
             collectionName: 'userList',
             objectProperties: ['avatar', 'bookGiveAwayCount', 'bookOwnCount', 'name', 'tradeCount'],
         },
+        {
+            keyname: 'category',
+            collectionName: 'category',
+            objectProperties: ['image', 'name',],
+        }
     ];
 
     useEffect(() => {
@@ -212,22 +272,36 @@ export const FeedScreenFetch = () => {
     }, []);
 }
 
-export const test2 = () => {
+/**
+ * fetch dữ liệu cho màn hình BookCategoryScreen.
+ */
+export const BookCategoryScreenFetch = () => {
+    const fetchRequests = [
+        {
+            keyname: 'category',
+            collectionName: 'category',
+            objectProperties: ['image', 'name',],
+        }
+    ];
+
     useEffect(() => {
-        retrieveData('books');
-        retrieveData('clubs');
-    }, [])
-    return (
-        <View>
-            <Text>test2</Text>
-        </View>
-    )
+        async function fetchData() {
+            for (const request of fetchRequests) {
+                const { keyname, collectionName, objectProperties } = request;
+                const data = await fetchAndSaveData(keyname, collectionName, objectProperties);
+                // Use the retrieved data if needed
+                console.log('Retrieved data:', data);
+            }
+        }
+        fetchData();
+    }, []);
 }
 
-// ___________________________________________________________________________________________________________________________________________ //
+
+// FEED SCREEN //
 
 /**
- * 
+ * dùng ở FeedScreen
  * @returns 
  */
 export const FeedSliceBanner = () => {
@@ -246,7 +320,7 @@ export const FeedSliceBanner = () => {
     }, []);
 
     const Item = ({ id, title, author, image, distance, owner }) => (
-        <View key={id} style={[styles.positionRelative, styles.w90vw, styles.h100, { backgroundColor: 'black', borderRadius: 16 }]}
+        <View key={id} style={[styles.positionRelative, styles.w90vw, styles.h100, { backgroundColor: 'black', borderRadius: vw(4) }]}
         >
             <ImageBackground
                 source={image} style={[styles.flex1]}>
@@ -343,9 +417,9 @@ export const FlatListBook2Col = () => {
                     return (
                         <View
                             key={item.id}
-                            style={[styles.w45vw, styles.dFlex, styles.flexCol, styles.justifyContentCenter, styles.gap2vw, styles.paddingV2vw, styles.positionRelative, { backgroundColor: '#F5EFE1', borderRadius: 16, }]}
+                            style={[styles.w45vw, styles.dFlex, styles.flexCol, styles.justifyContentCenter, styles.gap2vw, styles.paddingV2vw, styles.positionRelative, { backgroundColor: '#F5EFE1', borderRadius: vw(4), }]}
                         >
-                            <Image source={item.image} style={[styles.w40vw, styles.h40vw, styles.alignSelfCenter, { margin: '5%', borderRadius: 10 }]} />
+                            <Image source={item.image} style={[styles.w40vw, styles.h40vw, styles.alignSelfCenter, { margin: '5%', borderRadius: vw(2.5) }]} />
                             <View style={[styles.w90, styles.h20vw, styles.alignSelfCenter, styles.dFlex, styles.flexCol, styles.justifyContentSpaceBetween]}>
                                 <Text numberOfLines={2} ellipsizeMode='tail' style={[componentStyle.LibreBold18LineHeight20]}>{item.title}</Text>
                                 <View>
@@ -354,7 +428,7 @@ export const FlatListBook2Col = () => {
                                     <Text numberOfLines={1} ellipsizeMode='tail' style={[componentStyle.LibreNormal10LineHeight14,]}>Số lượng: {item.quantity}</Text>
                                 </View>
                             </View>
-                            <TouchableOpacity onPress={() => { toggleBookmark(item.id) }} style={[styles.positionAbsolute, styles.padding1vw, { bottom: vw(2), right: vw(2), backgroundColor: '#00000033', borderRadius: 10 }]}>
+                            <TouchableOpacity onPress={() => { toggleBookmark(item.id) }} style={[styles.positionAbsolute, styles.padding1vw, { bottom: vw(2), right: vw(2), backgroundColor: '#00000033', borderRadius: vw(2.5) }]}>
                                 <SvgXml fill={
                                     item.bookmark ? `black` : `none`
                                 } xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 8C6 5.18536 8 4 12 4C16 4 18 5.18537 18 8V19.0858C18 19.9767 16.9229 20.4229 16.2929 19.7929L12.7071 16.2071C12.3166 15.8166 11.6834 15.8166 11.2929 16.2071L7.70711 19.7929C7.07714 20.4229 6 19.9767 6 19.0858V8Z" stroke="#2F2F2F" stroke-linecap="round" stroke-linejoin="round"/></svg>`} />
@@ -366,8 +440,8 @@ export const FlatListBook2Col = () => {
             </View>
 
             <TouchableOpacity
-                onPress={() => { setNumberOfItemsToRender(numberOfItemsToRender+10) }}
-                style={[styles.alignSelfCenter, styles.w60, styles.hAuto, styles.dFlex, styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.paddingV4vw, styles.marginTop6vw, { backgroundColor: '#F5EFE1', borderRadius: 16, }]}
+                onPress={() => { setNumberOfItemsToRender(numberOfItemsToRender + 10) }}
+                style={[styles.alignSelfCenter, styles.w60, styles.hAuto, styles.dFlex, styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.paddingV4vw, styles.marginTop6vw, { backgroundColor: '#F5EFE1', borderRadius: vw(4), }]}
             >
                 <Text style={[componentStyle.fsLight18LineHeight20]}>Xem thêm</Text>
             </TouchableOpacity>
@@ -430,9 +504,9 @@ export const RenderBook = () => {
 
                         key={item.id}
 
-                        style={[styles.w45vw, styles.dFlex, styles.flexCol, styles.justifyContentCenter, styles.gap2vw, styles.paddingV2vw, styles.positionRelative, { backgroundColor: '#F5EFE1', borderRadius: 8, }]}
+                        style={[styles.w45vw, styles.dFlex, styles.flexCol, styles.justifyContentCenter, styles.gap2vw, styles.paddingV2vw, styles.positionRelative, { backgroundColor: '#F5EFE1', borderRadius: vw(2), }]}
                     >
-                        <Image source={item.image} style={[styles.w40vw, styles.h40vw, styles.alignSelfCenter, { margin: '5%', borderRadius: 8 }]} />
+                        <Image source={item.image} style={[styles.w40vw, styles.h40vw, styles.alignSelfCenter, { margin: '5%', borderRadius: vw(2) }]} />
                         <View style={[styles.w90, styles.h20vw, styles.alignSelfCenter, styles.dFlex, styles.flexCol, styles.justifyContentSpaceBetween]}>
                             <Text numberOfLines={2} ellipsizeMode='tail' style={[componentStyle.LibreBold18LineHeight20]}>{item.title}</Text>
                             <View>
@@ -449,6 +523,38 @@ export const RenderBook = () => {
     )
 }
 
+export const categoryFlatList = () => {
+    const [DATA, setDATA] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await retrieveData('category');
+                setDATA(data);
+            } catch (error) {
+                console.error("Error retriveing data:", error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const Item = ({ name, image }) => (
+        <TouchableOpacity style={[styles.marginLeft5vw]}>
+            <Image source={image} style={[styles.w20vw, styles.h20vw, { borderRadius: 1000 }]} />
+            <Text numberOfLines={2} ellipsizeMode='clip' style={[styles.textCenter, styles.w20vw, styles.fontSize3vw, { fontFamily: `fsLight`, }]}>{name}</Text>
+        </TouchableOpacity>
+    );
+
+    return (
+        <FlatList
+            data={DATA}
+            renderItem={({ item }) => <Item name={item.name} image={item.image} />}
+            keyExtractor={item => item.id}
+            horizontal={true}
+            // hide scroll bar
+            showsHorizontalScrollIndicator={false}
+        />)
+}
 
 /**
  * dung o FeedScreen
@@ -475,7 +581,7 @@ export const RenderClubList = () => {
         <View style={[styles.dFlex, styles.flexCol, styles.gap2vw, styles.w100]}>
             {DATA.slice(0, numberOfItemsToRender).map((item) => {
                 return (
-                    <View key={item.id} style={[styles.w100, styles.padding4vw, { backgroundColor: '#F5EFE1', borderRadius: 16 }]}>
+                    <View key={item.id} style={[styles.w100, styles.padding4vw, { backgroundColor: '#F5EFE1', borderRadius: vw(4) }]}>
                         <View style={[styles.dFlex, styles.flexRow, styles.gap4vw, styles.w100, styles.alignItemsCenter,]}>
                             <Image source={item.image} style={[styles.w15vw, styles.h15vw, { borderRadius: 1000 }]} />
                             <View style={[styles.dFlex, styles.flexCol, styles.justifyContentCenter, styles.flex1,]}>
@@ -495,8 +601,8 @@ export const RenderClubList = () => {
             })
             }
             <TouchableOpacity
-                onPress={() => { setNumberOfItemsToRender(numberOfItemsToRender+10) }}
-                style={[styles.alignSelfCenter, styles.w60, styles.hAuto, styles.dFlex, styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.paddingV4vw, styles.marginTop6vw, { backgroundColor: colorStyle.color1, borderRadius: 16, }]}
+                onPress={() => { setNumberOfItemsToRender(numberOfItemsToRender + 10) }}
+                style={[styles.alignSelfCenter, styles.w60, styles.hAuto, styles.dFlex, styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.paddingV4vw, styles.marginTop6vw, { backgroundColor: colorStyle.color1, borderRadius: vw(4), }]}
             >
                 <Text style={[componentStyle.fsSemiBold18LineHeight20, { color: colorStyle.color3, }]}>Xem thêm</Text>
             </TouchableOpacity>
@@ -524,18 +630,18 @@ export const MostPeople = () => {
     });
 
     return (
-        <View style={[styles.dFlex, styles.flexCol, styles.gap2vw, styles.justifyContentCenter, {backgroundColor: colorStyle.colorSecondary3, paddingTop: vw(8), paddingHorizontal: vw(4), paddingBottom: vw(6), borderTopLeftRadius: vw(12), borderTopRightRadius: vw(12)}]}>
+        <View style={[styles.dFlex, styles.flexCol, styles.gap2vw, styles.justifyContentCenter, { backgroundColor: colorStyle.colorSecondary3, paddingTop: vw(8), paddingHorizontal: vw(4), paddingBottom: vw(6), borderTopLeftRadius: vw(12), borderTopRightRadius: vw(12) }]}>
             <Text style={[componentStyle.LibreBold24LineHeight140, styles.textCenter, { color: 'white' }]}>“Bạn sách” thân thiết</Text>
-            <Text style={{ fontFamily: 'fsLight', fontSize: 12, lineHeight: 16, textAlign: 'center', color: 'white' }}>Top “Bạn sách” tích cực hoạt động và sở hữu lượng sách cùng chia sẻ với cộng đồng uy tín và lớn nhất</Text>
-            <View style={[styles.dFlex, styles.flexRow, styles.gap2vw, styles.w100, styles.justifyContentSpaceBetween, styles.alignItemsCenter, styles.alignSelfCenter, ]}>
+            <Text style={{ fontFamily: 'fsLight', fontSize: vw(3), lineHeight: vw(4), textAlign: 'center', color: 'white' }}>Top “Bạn sách” tích cực hoạt động và sở hữu lượng sách cùng chia sẻ với cộng đồng uy tín và lớn nhất</Text>
+            <View style={[styles.dFlex, styles.flexRow, styles.gap2vw, styles.w100, styles.justifyContentSpaceBetween, styles.alignItemsCenter, styles.alignSelfCenter,]}>
                 {sortedData.slice(1, 2).map((item) => {
                     return (
                         <View
-                            key={item.id} style={[styles.positionRelative, { width: '25%', height: '60%', marginTop: vw(6)}]}>
+                            key={item.id} style={[styles.positionRelative, { width: '25%', height: '60%', marginTop: vw(6) }]}>
                             <View style={[styles.w100, styles.h100, styles.positionAbsolute, { top: '-16%', zIndex: -1 }]}>{top2MostPeople()}</View>
-                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, { fontFamily: 'LibreBodoni_700Bold', color: '#243D5F', fontSize: 12, marginTop: vw(1) }]} numberOfLines={1}>{item.name}</Text>
-                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, { fontFamily: 'fsLight', color: colorStyle.colorNeutral1, fontSize: 6, letterSpacing: 2.4 }]}>TOP 2</Text>
-                            <Image source={item.avatar} style={[styles.alignSelfCenter, { borderRadius: 1000, width: vw(12), height: vw(12)}]} />
+                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, styles.overflowHiddenEllipsis, { fontFamily: 'LibreBodoni_700Bold', color: '#243D5F', fontSize: vw(3), marginTop: vw(1) }]} numberOfLines={1}>{item.name}</Text>
+                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, { fontFamily: 'fsLight', color: colorStyle.colorNeutral1, fontSize: vw(1.5), letterSpacing: 2.4 }]}>TOP 2</Text>
+                            <Image source={item.avatar} style={[styles.alignSelfCenter, { borderRadius: 1000, width: vw(12), height: vw(12) }]} />
                             <View style={[styles.dFlex, styles.w100, styles.flexRow, styles.justifyContentSpaceEvenly, styles.marginTop4vw]}>
                                 <View>
                                     <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Sở hữu</Text>
@@ -596,11 +702,11 @@ export const MostPeople = () => {
                 {sortedData.slice(2, 3).map((item) => {
                     return (
                         <View
-                            key={item.id} style={[styles.positionRelative, { width: '25%', height: '60%', marginTop: vw(6)}]}>
+                            key={item.id} style={[styles.positionRelative, { width: '25%', height: '60%', marginTop: vw(6) }]}>
                             <View style={[styles.w100, styles.h100, styles.positionAbsolute, { top: '-16%', zIndex: -1 }]}>{top3MostPeople()}</View>
-                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, { fontFamily: 'LibreBodoni_700Bold', color: '#243D5F', fontSize: 12, marginTop: vw(1) }]} numberOfLines={1}>{item.name}</Text>
-                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, { fontFamily: 'fsLight', color: colorStyle.colorNeutral1, fontSize: 6, letterSpacing: 2.4 }]}>TOP 2</Text>
-                            <Image source={item.avatar} style={[styles.alignSelfCenter, { borderRadius: 1000, width: vw(12), height: vw(12)}]} />
+                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, styles.overflowHiddenEllipsis, { fontFamily: 'LibreBodoni_700Bold', color: '#243D5F', fontSize: vw(3), marginTop: vw(1) }]} numberOfLines={1}>{item.name}</Text>
+                            <Text style={[styles.textCenter, styles.w80, styles.alignSelfCenter, { fontFamily: 'fsLight', color: colorStyle.colorNeutral1, fontSize: vw(1.5), letterSpacing: 2.4 }]}>TOP 3</Text>
+                            <Image source={item.avatar} style={[styles.alignSelfCenter, { borderRadius: 1000, width: vw(12), height: vw(12) }]} />
                             <View style={[styles.dFlex, styles.w100, styles.flexRow, styles.justifyContentSpaceEvenly, styles.marginTop4vw]}>
                                 <View>
                                     <Text style={[styles.textCenter, { color: 'white' }, componentStyle.fsLight4LineHeight6]}>Sở hữu</Text>
@@ -627,7 +733,7 @@ export const MostPeople = () => {
 
 }
 
-// ______________________________________________________________________________________________________ //
+// CHUNG //
 
 /**
  * 

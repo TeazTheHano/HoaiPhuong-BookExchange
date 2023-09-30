@@ -531,11 +531,11 @@ const styles = StyleSheet.create({
     },
 
     borderRadius10: {
-        borderRadius: 10,
+        borderRadius: vw(2.5),
     },
 
     borderRadius20: {
-        borderRadius: 20,
+        borderRadius: vw(5),
     },
 
     dFlex: {
@@ -645,6 +645,34 @@ const styles = StyleSheet.create({
 
     gap1vh: {
         gap: vh(1),
+    },
+
+    rowGap6vw: {
+        rowGap: vw(6),
+    },
+
+    rowGap4vw: {
+        rowGap: vw(4),
+    },
+
+    rowGap2vw: {
+        rowGap: vw(2),
+    },
+
+    rowGap1vw: {
+        rowGap: vw(1),
+    },
+
+    colGap4vw: {
+        columnGap: vw(4),
+    },
+
+    colGap2vw: {
+        columnGap: vw(2),
+    },
+
+    colGap1vw: {
+        columnGap: vw(1),
     },
 
     justifyContentCenter: {
@@ -817,8 +845,36 @@ const styles = StyleSheet.create({
         textAlign: 'justify',
     },
 
+    fontSize1vw: {
+        fontSize: vw(1),
+    },
+
+    fontSize2vw: {
+        fontSize: vw(2),
+    },
+
+    fontSize3vw: {
+        fontSize: vw(3),
+    },
+
+    fontSize4vw: {
+        fontSize: vw(4),
+    },
+
+    fontSize5vw: {
+        fontSize: vw(5),
+    },
+
+    fontSize6vw: {
+        fontSize: vw(6),
+    },
+
+    fontSize7vw: {
+        fontSize: vw(7),
+    },
+
     lineHeight20: {
-        lineHeight: 20,
+        lineHeight: vw(5),
     },
 
     overflowHidden: {
@@ -827,7 +883,6 @@ const styles = StyleSheet.create({
 
     overflowHiddenEllipsis: {
         overflow: 'hidden',
-        textOverflow: 'ellipsis',
     },
 
     overflowVisible: {

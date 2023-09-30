@@ -26,7 +26,9 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 const provider = new GoogleAuthProvider();
-const firestore = getFirestore();
+// const firestore = getFirestore();
+const firebaseApp = initializeApp(firebaseConfig);
+const firestore = getFirestore(firebaseApp);
 provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
 
 export { auth, provider, firestore }

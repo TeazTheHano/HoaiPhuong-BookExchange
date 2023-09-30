@@ -89,118 +89,124 @@ export const colorStyle = StyleSheet.create({
 const componentStyle = StyleSheet.create({
     h1: {
         fontFamily: 'LibreBodoni_700Bold',
-        lineHeight: 56,
+        lineHeight: vw(14),
         color: colorStyle.color1,
-        fontSize: 40,
+        fontSize: vw(10),
     },
 
     nunito: {
         fontFamily: 'Nunito_400Regular',
         color: colorStyle.color1,
-        fontSize: 20,
-        lineHeight: 25,
+        fontSize: vw(5),
+        lineHeight: vw(6.25),
     },
 
     LibreBold24LineHeight140: {
         fontFamily: 'LibreBodoni_700Bold',
-        fontSize: 24,
-        lineHeight: 33,
+        fontSize: vw(6),
+        lineHeight: vw(8.25),
     },
 
     LibreBold24LineHeight24: {
         fontFamily: 'LibreBodoni_700Bold',
-        fontSize: 24,
-        lineHeight: 24,
+        fontSize: vw(6),
+        lineHeight: vw(6),
     },
 
     LibreBold20LineHeight122: {
         fontFamily: 'LibreBodoni_700Bold',
-        fontSize: 20,
-        lineHeight: 24,
+        fontSize: vw(5),
+        lineHeight: vw(6),
     },
 
     LibreBold20LineHeight20: {
         fontFamily: 'LibreBodoni_700Bold',
-        fontSize: 20,
-        lineHeight: 20,
+        fontSize: vw(5),
+        lineHeight: vw(5),
     },
 
     LibreBold18LineHeight20: {
         fontFamily: 'LibreBodoni_700Bold',
-        fontSize: 18,
-        lineHeight: 20,
+        fontSize: vw(4.5),
+        lineHeight: vw(5),
     },
 
     LibreNormal14LineHeight16: {
         fontFamily: 'LibreBodoni_400Regular',
-        fontSize: 14,
-        lineHeight: 16,
+        fontSize: vw(3.5),
+        lineHeight: vw(4),
     },
         
     LibreNormal10LineHeight14: {
         fontFamily: 'LibreBodoni_400Regular',
-        fontSize: 10,
-        lineHeight: 14,
+        fontSize: vw(2.5),
+        lineHeight: vw(3.5),
     },
 
     fs24BoldLineHeight33: {
         fontFamily: 'fsBold',
-        fontSize: 24,
-        lineHeight: 33,
+        fontSize: vw(6),
+        lineHeight: vw(8.25),
+    },
+
+    fs22NormalLineHeight25: {
+        fontFamily: 'fsLight',
+        fontSize: vw(5.5),
+        lineHeight: vw(6.25),
     },
 
     fsLight16LineHeight24: {
         fontFamily: 'fsLight',
-        fontSize: 16,
-        lineHeight: 24,
+        fontSize: vw(4),
+        lineHeight: vw(6),
     },
 
     fsSemiBold18LineHeight20: {
         fontFamily: 'fsSemiBold',
-        fontSize: 18,
-        lineHeight: 20,
+        fontSize: vw(4.5),
+        lineHeight: vw(5),
     },
 
     fsLight18LineHeight20: {
         fontFamily: 'fsLight',
-        fontSize: 18,
-        lineHeight: 20,
+        fontSize: vw(4.5),
+        lineHeight: vw(5),
     },
 
     fsLight16LineHeight16: {
         fontFamily: 'fsLight',
-        fontSize: 16,
-        lineHeight: 16,
+        fontSize: vw(4),
+        lineHeight: vw(4),
     },
     
     fsBold16LineHeight24: {
         fontFamily: 'fsBold',
-        fontSize: 16,
-        lineHeight: 24,
+        fontSize: vw(4),
+        lineHeight: vw(6),
     },
 
     fsLight14LineHeight18: {
         fontFamily: 'fsLight',
-        fontSize: 14,
-        lineHeight: 18,
+        fontSize: vw(3.5),
+        lineHeight: vw(4.5),
     },
 
     fsLight10LineHeight14: {
         fontFamily: 'fsLight',
-        fontSize: 10,
-        lineHeight: 14,
+        fontSize: vw(2.5),
+        lineHeight: vw(3.5),
     },
 
     fsLight8LineHeight10: {
         fontFamily: 'fsLight',
-        fontSize: 8,
-        lineHeight: 10,
+        fontSize: vw(2),
+        lineHeight: vw(2.5),
     },
 
     fsLight4LineHeight6: {
         fontFamily: 'fsLight',
-        fontSize: 4,
-        lineHeight: 6,
+        fontSize: vw(1),
+        lineHeight: vw(1.5),
     },
 
     // login/register screen
@@ -219,18 +225,18 @@ const componentStyle = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 10,
-        borderRadius: 10,
-        paddingHorizontal: 20,
+        gap: vw(2.5),
+        borderRadius: vw(2.5),
+        paddingHorizontal: vw(5),
         width: '100%',
     },
 
     loginInputText: {
         fontFamily: 'fsLight',
-        fontSize: 14,
-        lineHeight: 18,
+        fontSize: vw(3.5),
+        lineHeight: vw(4.5),
         color: colorStyle.colorText,
-        paddingVertical: 16,
+        paddingVertical: vw(4),
         paddingHorizontal: vw(2),
         width: '100%',
         height: '100%',
@@ -238,7 +244,7 @@ const componentStyle = StyleSheet.create({
 
     submitBtn: {
         borderWidth: 2,
-        borderRadius: 10,
+        borderRadius: vw(2.5),
         width: '90%',
         marginLeft: '5%',
         display: 'flex',
@@ -249,9 +255,9 @@ const componentStyle = StyleSheet.create({
 
     submitBtnText: {
         fontFamily: 'fsSemiBold',
-        fontSize: 18,
-        lineHeight: 18,
-        paddingVertical: 18,
+        fontSize: vw(4.5),
+        lineHeight: vw(4.5),
+        paddingVertical: vw(4.5),
     },
 });
 
