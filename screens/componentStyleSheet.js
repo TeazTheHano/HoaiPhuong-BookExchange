@@ -155,6 +155,12 @@ const componentStyle = StyleSheet.create({
         lineHeight: vw(6.25),
     },
 
+    fs20BoldLineHeight20: {
+        fontFamily: 'fsBold',
+        fontSize: vw(5),
+        lineHeight: vw(5),
+    },
+
     fsLight16LineHeight24: {
         fontFamily: 'fsLight',
         fontSize: vw(4),

@@ -42,8 +42,8 @@ function HomeScreen({ navigation }) {
             display: "flex",
             // paddingTop: vw(4),
             // marginBottom: 0,
-            alignContent: "center",
-            alignItems: "center",
+            // alignContent: "center",
+            // alignItems: "center",
           },
           null
         ]

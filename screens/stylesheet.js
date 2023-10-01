@@ -538,6 +538,11 @@ const styles = StyleSheet.create({
         borderRadius: vw(5),
     },
 
+    borderRadiusBottom24: {
+        borderBottomLeftRadius: vw(6),
+        borderBottomRightRadius: vw(6),
+    },
+
     dFlex: {
         display: 'flex',
     },
