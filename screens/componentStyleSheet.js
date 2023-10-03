@@ -101,6 +101,11 @@ const componentStyle = StyleSheet.create({
         lineHeight: vw(6.25),
     },
 
+    LibreBold32: {
+        fontFamily: 'LibreBodoni_700Bold',
+        fontSize: vw(8),
+    },
+
     LibreBold24LineHeight140: {
         fontFamily: 'LibreBodoni_700Bold',
         fontSize: vw(6),
@@ -123,6 +128,11 @@ const componentStyle = StyleSheet.create({
         fontFamily: 'LibreBodoni_700Bold',
         fontSize: vw(5),
         lineHeight: vw(5),
+    },
+
+    LibreBold18: {
+        fontFamily: 'LibreBodoni_700Bold',
+        fontSize: vw(4.5),
     },
 
     LibreBold18LineHeight20: {
@@ -191,10 +201,21 @@ const componentStyle = StyleSheet.create({
         lineHeight: vw(6),
     },
 
+    fsLight14: {  
+        fontFamily: 'fsLight',
+        fontSize: vw(3.5),
+    },
+
     fsLight14LineHeight18: {
         fontFamily: 'fsLight',
         fontSize: vw(3.5),
         lineHeight: vw(4.5),
+    },
+
+    fs12NormalLineHeight12: {
+        fontFamily: 'fsLight',
+        fontSize: vw(3),
+        lineHeight: vw(3),
     },
 
     fsLight10LineHeight14: {

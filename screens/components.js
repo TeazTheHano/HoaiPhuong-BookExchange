@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 // Import firebase
 import { auth, firestore } from '../firebase'
-import { doc, setDoc, getDoc, collection, getDocs, updateDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, getDocs, updateDoc, where } from "firebase/firestore";
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -111,11 +111,11 @@ export const queryCollectionBInsideCollectionA = async (collectionAName, documen
  * @param {string} objectProperties : mảng các thuộc tính của đối tượng
  * @returns : mảng các object chứa dữ liệu của các đối tượng thuộc Collection yêu cầu
  */
-export const fetchAndSaveData = async (keyname, collectionName, objectProperties) => {
+export const fetchAndSaveData = async (keyname, collectionName, objectProperties, filterCondition) => {
     try {
         const db = firestore;
         const documentCollection = collection(db, collectionName);
-        const querySnapshot = await getDocs(documentCollection);
+        const querySnapshot = await getDocs(where(documentCollection, ...filterCondition));
 
         const data = await Promise.all(querySnapshot.docs.map(async (doc) => {
             const docData = doc.data();
@@ -241,29 +241,33 @@ export const FeedScreenFetch = () => {
             keyname: 'books',
             collectionName: 'books',
             objectProperties: ['author', 'bookmark', 'image', 'owner', 'quantity', 'title', 'distance', 'category'],
+            filterCondition: []
         },
         {
             keyname: 'clubs',
             collectionName: 'club',
             objectProperties: ['image', 'memberNumber', 'subtitle', 'title'],
+            filterCondition: []
         },
         {
             keyname: 'userList',
             collectionName: 'userList',
             objectProperties: ['avatar', 'bookGiveAwayCount', 'bookOwnCount', 'name', 'tradeCount'],
+            filterCondition: []
         },
         {
             keyname: 'category',
             collectionName: 'category',
             objectProperties: ['image', 'name',],
+            filterCondition: []
         }
     ];
 
     useEffect(() => {
         async function fetchData() {
             for (const request of fetchRequests) {
-                const { keyname, collectionName, objectProperties } = request;
-                const data = await fetchAndSaveData(keyname, collectionName, objectProperties);
+                const { keyname, collectionName, objectProperties, filterCondition } = request;
+                const data = await fetchAndSaveData(keyname, collectionName, objectProperties, filterCondition);
                 // Use the retrieved data if needed
                 console.log('Retrieved data:', data);
             }
@@ -281,14 +285,15 @@ export const BookCategoryScreenFetch = () => {
             keyname: 'category',
             collectionName: 'category',
             objectProperties: ['image', 'name',],
+            filterCondition: []
         }
     ];
 
     useEffect(() => {
         async function fetchData() {
             for (const request of fetchRequests) {
-                const { keyname, collectionName, objectProperties } = request;
-                const data = await fetchAndSaveData(keyname, collectionName, objectProperties);
+                const { keyname, collectionName, objectProperties, filterCondition } = request;
+                const data = await fetchAndSaveData(keyname, collectionName, objectProperties, filterCondition);
                 // Use the retrieved data if needed
                 console.log('Retrieved data:', data);
             }

@@ -398,38 +398,59 @@ const styles = StyleSheet.create({
     },
 
     marginHorizontal10vw: {
-        marginLeft: vw(10),
-        marginRight: vw(10),
+        marginHorizontal: vw(10),
     },
 
     marginHorizontal8vw: {
-        marginLeft: vw(8),
-        marginRight: vw(8),
+        marginHorizontal: vw(8),
     },
 
     marginHorizontal6vw: {
-        marginLeft: vw(6),
-        marginRight: vw(6),
+        marginHorizontal: vw(6),
     },
 
     marginHorizontal5vw: {
-        marginLeft: vw(5),
-        marginRight: vw(5),
+        marginHorizontal: vw(5),
     },
 
     marginHorizontal4vw: {
-        marginLeft: vw(4),
-        marginRight: vw(4),
+        marginHorizontal: vw(4),
     },
 
     marginHorizontal2vw: {
-        marginLeft: vw(2),
-        marginRight: vw(2),
+        marginHorizontal: vw(2),
     },
 
     marginHorizontal1vw: {
-        marginLeft: vw(1),
-        marginRight: vw(1),
+        marginHorizontal: vw(1),
+    },
+
+    marginVertical10vw: {
+        marginVertical: vw(10),
+    },
+
+    marginVertical8vw: {
+        marginVertical: vw(8),
+    },
+
+    marginVertical6vw: {
+        marginVertical: vw(6),
+    },
+
+    marginVertical5vw: {
+        marginVertical: vw(5),
+    },
+
+    marginVertical4vw: {
+        marginVertical: vw(4),
+    },
+
+    marginVertical2vw: {
+        marginVertical: vw(2),
+    },
+
+    marginVertical1vw: {
+        marginVertical: vw(1),
     },
 
     padding8vw: {
@@ -500,34 +521,32 @@ const styles = StyleSheet.create({
         paddingBottom: vw(1),
     },
 
+    paddingH8vw: {
+        paddingHorizontal: vw(8),
+    },
+
     paddingH4vw: {
-        paddingLeft: vw(4),
-        paddingRight: vw(4),
+        paddingHorizontal: vw(4),
     },
 
     paddingH2vw: {
-        paddingLeft: vw(2),
-        paddingRight: vw(2),
+        paddingHorizontal: vw(2),
     },
 
     paddingH1vw: {
-        paddingLeft: vw(1),
-        paddingRight: vw(1),
+        paddingHorizontal: vw(1),
     },
 
     paddingV4vw: {
-        paddingTop: vw(4),
-        paddingBottom: vw(4),
+        paddingVertical: vw(4),
     },
 
     paddingV2vw: {
-        paddingTop: vw(2),
-        paddingBottom: vw(2),
+        paddingVertical: vw(2),
     },
 
     paddingV1vw: {
-        paddingTop: vw(1),
-        paddingBottom: vw(1),
+        paddingVertical: vw(1),
     },
 
     borderRadius10: {

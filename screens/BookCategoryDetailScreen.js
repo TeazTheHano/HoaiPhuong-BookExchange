@@ -185,7 +185,7 @@ function BookCategoryDetailScreen({ route, navigation }) {
         <SafeAreaView style={[styles.container, styles.flex1, { backgroundColor: 'black' }]}>
             <StatusBar barStyle="light-content" backgroundColor='black' />
             {searchingTopNavBar('Danh mục sách', colorStyle.color3, 'black', colorStyle.color3)}
-            <ScrollView style={[styles.paddingTop4vw, { backgroundColor: colorStyle.color3, }]}
+            <ScrollView style={[styles.paddingTop4vw, styles.flex1, { backgroundColor: colorStyle.color3, }]}
                 // hide scroll bar
                 showsVerticalScrollIndicator={false}
             >
